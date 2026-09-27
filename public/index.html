@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tukang Siaga - Jasa Perbaikan & Perawatan Rumah Profesional</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Tukang Siaga menyediakan layanan jasa perbaikan rumah, renovasi, servis atap, ledeng, kelistrikan, dan tukang bangunan profesional yang bisa dipanggil kapan saja.">
+    <meta name="keywords" content="tukang panggilan, tukang bangunan, perbaikan rumah, renovasi rumah, tukang atap bocor, jasa pipa ledeng, tukang listrik, tukang siaga">
+    <meta name="author" content="Tukang Siaga">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tukangsiaga.com/">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tukangsiaga.com/">
+    <meta property="og:title" content="Tukang Siaga - Jasa Perbaikan Rumah Profesional">
+    <meta property="og:description" content="Layanan jasa tukang panggilan untuk segala kebutuhan perbaikan dan renovasi rumah Anda. Cepat, aman, dan bergaransi.">
+    <meta property="og:image" content="https://tukangsiaga.com/og-image.jpg">
+    <meta property="og:site_name" content="Tukang Siaga">
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Tukang Siaga - Solusi Perbaikan Rumah">
+    <meta name="twitter:description" content="Butuh tukang mendadak? Tukang Siaga siap mengatasi masalah atap, pipa, listrik, dan renovasi rumah Anda.">
+    
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HomeAndConstructionBusiness",
+      "name": "Tukang Siaga",
+      "description": "Layanan jasa tukang bangunan, kelistrikan, saluran air, dan perbaikan rumah profesional.",
+      "url": "https://tukangsiaga.com",
+      "telephone": "+6281234567890",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Jakarta",
+        "addressCountry": "ID"
+      },
+      "priceRange": "$$"
+    }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50:  '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        .hero-bg { background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%); }
+        .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37,99,235,0.12); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+
+<!-- ===== NAVBAR ===== -->
+<header class="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
+    <div class="mx-auto max-w-7xl flex h-16 items-center justify-between px-6">
+        <a href="/" class="flex items-center gap-3 font-bold text-lg tracking-tight text-slate-900">
+            <div id="navLogoContainer" class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-white shadow-sm overflow-hidden">
+                <i id="navLogoIcon" data-lucide="hammer" class="w-5 h-5"></i>
+                <img id="navLogoImg" src="" alt="Logo" class="w-full h-full object-cover hidden">
+            </div>
+            <span id="navCompanyName">Tukang<span class="text-brand-600">Siaga</span></span>
+        </a>
+        <nav class="hidden md:flex items-center gap-1 text-sm">
+            <a href="#layanan" class="px-4 py-2 rounded-md font-medium text-slate-600 hover:text-brand-700 hover:bg-brand-50 transition-colors">Layanan</a>
+            <a href="#galeri"  class="px-4 py-2 rounded-md font-medium text-slate-600 hover:text-brand-700 hover:bg-brand-50 transition-colors">Galeri</a>
+            <a href="#lacak"   class="px-4 py-2 rounded-md font-medium text-slate-600 hover:text-brand-700 hover:bg-brand-50 transition-colors">Lacak Progres</a>
+        </nav>
+        <div class="flex items-center gap-3">
+            <a href="/admin-login.html" class="hidden sm:flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
+                <i data-lucide="lock" class="w-4 h-4"></i> Admin
+            </a>
+            <button onclick="openModal()" class="flex items-center gap-2 rounded-lg bg-brand-600 hover:bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors">
+                <i data-lucide="plus" class="w-4 h-4"></i> Pesan Jasa
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero-bg text-white">
+    <div class="mx-auto max-w-7xl px-6 py-20 md:py-28">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <div class="mb-5 inline-flex items-center gap-2 rounded-full bg-white/15 border border-white/25 px-4 py-1.5 text-xs font-semibold text-white">
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                    Tukang Tersedia Sekarang &bull; Respons &lt; 15 Menit
+                </div>
+                <h1 id="heroTitle" class="text-4xl md:text-5xl font-extrabold leading-tight mb-5">
+                    Perbaikan Rumah<br/>Cepat, Transparan,<br/><span class="text-blue-300">& Bergaransi.</span>
+                </h1>
+                <p id="heroSubtitle" class="text-blue-100 text-lg leading-relaxed mb-8 max-w-md">
+                    Pantau setiap tahap pekerjaan secara real-time. Harga jelas di awal, tanpa biaya tersembunyi.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="openModal()" class="flex items-center justify-center gap-2 rounded-lg bg-white text-brand-700 font-semibold px-6 py-3 text-sm hover:bg-blue-50 shadow-sm transition-colors">
+                        <i data-lucide="calendar-check" class="w-5 h-5"></i> Pesan Sekarang — Gratis Survei
+                    </button>
+                    <a href="#lacak" class="flex items-center justify-center gap-2 rounded-lg border border-white/30 bg-white/10 text-white font-semibold px-6 py-3 text-sm hover:bg-white/20 transition-colors">
+                        <i data-lucide="search" class="w-5 h-5"></i> Lacak Pekerjaan Saya
+                    </a>
+                </div>
+            </div>
+            <!-- Stats card -->
+            <div class="hidden md:block">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/10 border border-white/20 rounded-xl p-5 backdrop-blur-sm">
+                        <p class="text-3xl font-bold text-white">1.200+</p>
+                        <p class="text-blue-200 text-sm mt-1">Proyek Selesai</p>
+                    </div>
+                    <div class="bg-white/10 border border-white/20 rounded-xl p-5 backdrop-blur-sm">
+                        <p class="text-3xl font-bold text-white">98%</p>
+                        <p class="text-blue-200 text-sm mt-1">Kepuasan Pelanggan</p>
+                    </div>
+                    <div class="bg-white/10 border border-white/20 rounded-xl p-5 backdrop-blur-sm">
+                        <p class="text-3xl font-bold text-white">45+</p>
+                        <p class="text-blue-200 text-sm mt-1">Tukang Bersertifikat</p>
+                    </div>
+                    <div class="bg-white/10 border border-white/20 rounded-xl p-5 backdrop-blur-sm">
+                        <p class="text-3xl font-bold text-white">&lt; 3 Jam</p>
+                        <p class="text-blue-200 text-sm mt-1">Respons Rata-rata</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== KEUNGGULAN ===== -->
+<section class="bg-white border-b border-slate-100 py-14 px-6">
+    <div class="mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="flex items-start gap-4">
+            <div class="h-10 w-10 shrink-0 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600">
+                <i data-lucide="eye" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-900 mb-1">Pantau Real-Time</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">Lacak progres pekerjaan dengan ID unik dari HP kapan saja. Foto bukti lapangan langsung dari tukang.</p>
+            </div>
+        </div>
+        <div class="flex items-start gap-4">
+            <div class="h-10 w-10 shrink-0 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600">
+                <i data-lucide="tag" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-900 mb-1">Harga Transparan</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">Estimasi biaya jelas sebelum pekerjaan dimulai. Tidak ada biaya kejutan di akhir pekerjaan.</p>
+            </div>
+        </div>
+        <div class="flex items-start gap-4">
+            <div class="h-10 w-10 shrink-0 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600">
+                <i data-lucide="shield-check" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="font-semibold text-slate-900 mb-1">Garansi Pekerjaan</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">Setiap pekerjaan dilindungi garansi resmi. Kami pastikan hasil sesuai standar kualitas kami.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== LAYANAN & HARGA ===== -->
+<section id="layanan" class="py-20 px-6 bg-slate-50">
+    <div class="mx-auto max-w-7xl">
+        <div class="mb-12">
+            <span class="inline-block rounded-full bg-brand-100 text-brand-700 text-xs font-semibold px-3 py-1 mb-3">LAYANAN KAMI</span>
+            <h2 class="text-3xl font-bold text-slate-900">Layanan & Estimasi Harga</h2>
+            <p class="text-slate-500 mt-2 max-w-lg">Harga estimasi awal, biaya final setelah survei gratis. Semua dikelola langsung dari panel admin.</p>
+        </div>
+        <div id="services-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Skeleton loader -->
+            <div class="animate-pulse bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+                <div class="h-10 w-10 rounded-lg bg-slate-200"></div>
+                <div class="h-5 w-2/3 rounded bg-slate-200"></div>
+                <div class="h-4 rounded bg-slate-200"></div>
+                <div class="h-4 w-4/5 rounded bg-slate-200"></div>
+                <div class="h-8 rounded-lg bg-slate-200 mt-4"></div>
+            </div>
+            <div class="animate-pulse bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+                <div class="h-10 w-10 rounded-lg bg-slate-200"></div>
+                <div class="h-5 w-2/3 rounded bg-slate-200"></div>
+                <div class="h-4 rounded bg-slate-200"></div>
+                <div class="h-4 w-4/5 rounded bg-slate-200"></div>
+                <div class="h-8 rounded-lg bg-slate-200 mt-4"></div>
+            </div>
+            <div class="animate-pulse bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+                <div class="h-10 w-10 rounded-lg bg-slate-200"></div>
+                <div class="h-5 w-2/3 rounded bg-slate-200"></div>
+                <div class="h-4 rounded bg-slate-200"></div>
+                <div class="h-4 w-4/5 rounded bg-slate-200"></div>
+                <div class="h-8 rounded-lg bg-slate-200 mt-4"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== LACAK PROGRES ===== -->
+<section id="lacak" class="py-20 px-6 bg-brand-700">
+    <div class="mx-auto max-w-7xl">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="text-white">
+                <span class="inline-block rounded-full bg-white/20 text-white text-xs font-semibold px-3 py-1 mb-4">FITUR UNGGULAN</span>
+                <h2 class="text-3xl font-bold mb-4">Lacak Progres Pekerjaan Real-Time</h2>
+                <p class="text-blue-100 leading-relaxed mb-6">Setiap pesanan mendapat ID unik. Gunakan ID tersebut untuk memantau status terkini, melihat foto bukti dari lapangan, dan mencetak Work Order atau Invoice kapan saja.</p>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3 text-sm text-blue-100">
+                        <div class="h-6 w-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                            <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                        </div>
+                        Update status secara real-time
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-blue-100">
+                        <div class="h-6 w-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                            <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                        </div>
+                        Foto bukti pengerjaan dari lapangan
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-blue-100">
+                        <div class="h-6 w-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                            <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                        </div>
+                        Cetak Work Order & Invoice digital
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+                <h3 class="font-semibold text-slate-900 mb-1">Cek Status Pekerjaan Anda</h3>
+                <p class="text-sm text-slate-500 mb-4">ID dikirim ke WhatsApp setelah pesanan dibuat.</p>
+                <div class="flex gap-2">
+                    <input type="text" id="trackingInput" placeholder="Contoh: FIX-1234"
+                        class="flex-1 h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
+                    <button onclick="trackOrder()" class="flex items-center gap-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white px-5 font-semibold text-sm transition-colors">
+                        <i data-lucide="search" class="w-4 h-4"></i> Lacak
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== GALERI ===== -->
+<section id="galeri" class="py-20 px-6 bg-white">
+    <div class="mx-auto max-w-7xl">
+        <div class="mb-8">
+            <span class="inline-block rounded-full bg-brand-100 text-brand-700 text-xs font-semibold px-3 py-1 mb-3">PORTOFOLIO</span>
+            <h2 class="text-3xl font-bold text-slate-900">Galeri Proyek Kami</h2>
+            <p class="text-slate-500 mt-2">Hasil nyata dari ribuan pekerjaan yang telah kami selesaikan di seluruh Jakarta.</p>
+        </div>
+        <div id="gallery-filters" class="flex flex-wrap gap-2 mb-8">
+            <!-- Filter buttons will be populated here -->
+        </div>
+        <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <!-- Static fallback gallery (langsung tampil, tidak tunggu API) -->
+            <div class="group relative overflow-hidden rounded-xl bg-slate-100 border border-slate-200 aspect-[4/3] card-hover">
+                <img src="https://images.unsplash.com/photo-1632759145351-1d592919f522?w=600&q=75&auto=format" alt="Perbaikan Genteng" loading="lazy" onerror="this.src='https://placehold.co/600x450/dbeafe/1d4ed8?text=Perbaikan+Genteng'" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-4">
+                    <span class="text-white text-sm font-semibold">Perbaikan Genteng Bocor</span>
+                </div>
+            </div>
+            <div class="group relative overflow-hidden rounded-xl bg-slate-100 border border-slate-200 aspect-[4/3] card-hover">
+                <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=75&auto=format" alt="Plafon Gypsum" loading="lazy" onerror="this.src='https://placehold.co/600x450/dbeafe/1d4ed8?text=Plafon+Gypsum'" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-4">
+                    <span class="text-white text-sm font-semibold">Instalasi Plafon Gypsum</span>
+                </div>
+            </div>
+            <div class="group relative overflow-hidden rounded-xl bg-slate-100 border border-slate-200 aspect-[4/3] card-hover">
+                <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=75&auto=format" alt="Pipa Bocor" loading="lazy" onerror="this.src='https://placehold.co/600x450/dbeafe/1d4ed8?text=Pipa+Bocor'" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-4">
+                    <span class="text-white text-sm font-semibold">Perbaikan Pipa Air Bocor</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="bg-slate-900 text-slate-400">
+    <div class="mx-auto max-w-7xl px-6 py-14 grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div class="md:col-span-2">
+            <div class="flex items-center gap-2.5 font-bold text-lg text-white mb-4">
+                <div id="footerLogoContainer" class="h-8 w-8 rounded-lg bg-brand-600 flex items-center justify-center overflow-hidden">
+                    <i id="footerLogoIcon" data-lucide="hammer" class="w-4 h-4 text-white"></i>
+                    <img id="footerLogoImg" src="" alt="Logo" class="w-full h-full object-cover hidden">
+                </div>
+                <span id="footerCompanyName">TukangSiaga</span>
+            </div>
+            <p id="footerAboutText" class="text-sm leading-relaxed max-w-sm mb-6">
+                Layanan perbaikan dan perawatan rumah terpercaya. Kami menghadirkan solusi profesional dengan harga transparan dan bergaransi.
+            </p>
+        </div>
+        <div>
+            <h4 class="text-sm font-semibold text-white mb-4">Tautan Cepat</h4>
+            <ul class="space-y-3 text-sm">
+                <li><a href="#layanan" class="hover:text-white transition-colors">Layanan & Harga</a></li>
+                <li><a href="#galeri" class="hover:text-white transition-colors">Galeri Proyek</a></li>
+                <li><a href="#lacak" class="hover:text-white transition-colors">Lacak Progres</a></li>
+                <li><a href="/admin-login.html" class="hover:text-white transition-colors">Portal Admin</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="text-sm font-semibold text-white mb-4">Kontak</h4>
+            <ul class="space-y-3 text-sm">
+                <li class="flex items-start gap-2.5"><i data-lucide="mail" class="w-4 h-4 shrink-0 text-brand-400"></i><span id="footerEmail">hello@tukangsiaga.com</span></li>
+                <li class="flex items-start gap-2.5"><i data-lucide="phone" class="w-4 h-4 shrink-0 text-brand-400"></i><span id="footerPhone">0812-3456-7890</span></li>
+                <li class="flex items-start gap-2.5"><i data-lucide="map-pin" class="w-4 h-4 shrink-0 text-brand-400"></i><span id="footerAddress">Jakarta Pusat</span></li>
+                <li class="flex items-start gap-2.5"><i data-lucide="map" class="w-4 h-4 shrink-0 text-brand-400"></i><span id="footerCoverage">Area Cakupan: Jakarta, Bogor, Depok, Tangerang, Bekasi</span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="border-t border-slate-800">
+        <div class="mx-auto max-w-7xl px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <p>&copy; <span id="footerYear">2026</span> <span id="footerCopyName">TukangSiaga</span>. All rights reserved.</p>
+            <div class="flex gap-5">
+                <a href="#" class="hover:text-white transition-colors">Kebijakan Privasi</a>
+                <a href="#" class="hover:text-white transition-colors">Syarat & Ketentuan</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ===== MODAL PESAN ===== -->
+<div id="orderModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col max-h-[95vh]">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="h-8 w-8 rounded-lg bg-brand-600 flex items-center justify-center">
+                    <i data-lucide="clipboard-list" class="w-4 h-4 text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-semibold text-slate-900">Formulir Pemesanan</h2>
+                    <p class="text-xs text-slate-500">ID Proyek dikirim via WhatsApp.</p>
+                </div>
+            </div>
+            <button onclick="closeModal()" class="h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <!-- Body (scrollable) -->
+        <div class="overflow-y-auto flex-1 px-6 py-5 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-semibold text-slate-700">Nama Lengkap *</label>
+                    <input id="orderName" type="text" required placeholder="Budi Santoso"
+                        class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-semibold text-slate-700">No. WhatsApp *</label>
+                    <input id="orderWa" type="tel" required placeholder="08xxxxxxxxxx"
+                        class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                </div>
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-semibold text-slate-700">Alamat Lengkap *</label>
+                <textarea id="orderAddress" required rows="2" placeholder="Jl. Contoh No. 12, RT 01/02, Kelurahan, Kota"
+                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition resize-none"></textarea>
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-semibold text-slate-700">Jenis Layanan *</label>
+                <select id="orderService" required
+                    class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                    <option value="">— Pilih Layanan —</option>
+                </select>
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-semibold text-slate-700">Deskripsi Masalah *</label>
+                <textarea id="orderDesc" required rows="2" placeholder="Ceritakan kerusakan yang perlu diperbaiki..."
+                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition resize-none"></textarea>
+            </div>
+
+            <!-- Upload Foto -->
+            <div class="space-y-1.5">
+                <label class="text-xs font-semibold text-slate-700">
+                    Foto Kerusakan
+                    <span class="font-normal text-slate-400 ml-1">(Opsional · JPG/PNG/WEBP · Maks 5 MB)</span>
+                </label>
+                <div id="dropZone"
+                    class="flex flex-col items-center gap-3 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-6 text-center cursor-pointer transition-colors hover:border-brand-400 hover:bg-brand-50"
+                    onclick="document.getElementById('photoInput').click()"
+                    ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                    <input id="photoInput" type="file" accept=".jpg,.jpeg,.png,.webp" class="hidden" onchange="handleFileSelect(this.files[0])">
+                    <!-- Empty state -->
+                    <div id="dropEmpty" class="flex flex-col items-center gap-2">
+                        <div class="h-12 w-12 rounded-full bg-brand-100 flex items-center justify-center text-brand-500">
+                            <i data-lucide="camera" class="w-6 h-6"></i>
+                        </div>
+                        <p class="text-sm font-medium text-slate-700">Klik atau drag & drop foto</p>
+                        <p class="text-xs text-slate-400">Format: JPG, PNG, WEBP</p>
+                    </div>
+                    <!-- Preview state -->
+                    <div id="dropPreview" class="hidden w-full">
+                        <div class="relative rounded-lg overflow-hidden bg-slate-200 aspect-video max-h-44">
+                            <img id="previewImg" src="" alt="" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                <span class="text-white text-xs font-medium bg-black/50 px-3 py-1.5 rounded">Ganti foto</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mt-2 px-1">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <i data-lucide="image" class="text-brand-500 w-4 h-4 shrink-0"></i>
+                                <span id="photoFileName" class="text-xs text-slate-600 truncate"></span>
+                                <span id="photoFileSize" class="text-xs text-slate-400 shrink-0"></span>
+                            </div>
+                            <button type="button" onclick="removePhoto(event)" class="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 font-medium shrink-0 ml-2">
+                                <i data-lucide="trash-2" class="w-3 h-3"></i> Hapus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <p id="photoError" class="hidden text-xs text-red-600 flex items-center gap-1">
+                    <i data-lucide="alert-circle" class="w-3 h-3"></i>
+                    <span id="photoErrorMsg"></span>
+                </p>
+            </div>
+
+            <!-- Error -->
+            <div id="orderError" class="hidden rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 flex items-start gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4 mt-0.5 shrink-0"></i>
+                <span id="orderErrorMsg"></span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex gap-3 px-6 py-4 border-t border-slate-100 shrink-0">
+            <button type="button" onclick="closeModal()" class="flex-1 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+                Batal
+            </button>
+            <button type="button" onclick="submitOrder()" id="btnSubmit"
+                class="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
+                <i data-lucide="send" class="w-4 h-4" id="iconSubmit"></i> <span id="textSubmit">Kirim Pesanan</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
+    <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white shadow-lg shadow-slate-200 px-4 py-3 text-sm font-semibold text-slate-900">
+        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+        <span id="toastMsg"></span>
+    </div>
+</div>
+
+<!-- ===== FLOATING WA ===== -->
+<a id="floatingWa" href="#" target="_blank" class="fixed bottom-6 left-6 z-40 hidden items-center justify-center w-14 h-14 rounded-full bg-[#25D366] hover:bg-[#128C7E] text-white shadow-lg shadow-[#25D366]/30 transition-all hover:scale-110">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c-.003 1.396.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c.003-3.625 2.952-6.575 6.577-6.575 1.76 0 3.413.686 4.657 1.932 1.243 1.246 1.926 2.9 1.924 4.659-.004 3.627-2.95 6.575-6.571 6.575zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+    </svg>
+</a>
+
+<script>
+    const fmtRp = n => new Intl.NumberFormat('id-ID', { style:'currency', currency:'IDR', minimumFractionDigits:0 }).format(n);
+    let _selectedFile = null;
+
+    // ── Modal ──
+    function openModal()  { document.getElementById('orderModal').classList.replace('hidden','flex'); document.body.style.overflow='hidden'; }
+    function closeModal() { document.getElementById('orderModal').classList.replace('flex','hidden'); document.body.style.overflow=''; resetForm(); }
+    document.getElementById('orderModal').addEventListener('click', e => { if (e.target===document.getElementById('orderModal')) closeModal(); });
+
+    function resetForm() {
+        ['orderName','orderWa','orderAddress','orderService','orderDesc'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        removePhoto();
+        document.getElementById('orderError').classList.add('hidden');
+    }
+
+    // ── Toast ──
+    function showToast(msg, ms=4000) {
+        document.getElementById('toastMsg').textContent = msg;
+        document.getElementById('toast').classList.remove('hidden');
+        setTimeout(() => document.getElementById('toast').classList.add('hidden'), ms);
+    }
+
+    // ── Lacak ──
+    function trackOrder() {
+        const id = document.getElementById('trackingInput').value.trim().toUpperCase();
+        if (!id) { alert('Masukkan ID Pekerjaan terlebih dahulu.'); return; }
+        window.location.href = `/progress.html?id=${id}`;
+    }
+    document.getElementById('trackingInput').addEventListener('keypress', e => { if (e.key==='Enter') trackOrder(); });
+
+    // ── Drag & Drop ──
+    function handleDragOver(e) { e.preventDefault(); document.getElementById('dropZone').classList.add('border-brand-500','bg-brand-50'); }
+    function handleDragLeave()  { document.getElementById('dropZone').classList.remove('border-brand-500','bg-brand-50'); }
+    function handleDrop(e)      { e.preventDefault(); handleDragLeave(); if (e.dataTransfer.files[0]) handleFileSelect(e.dataTransfer.files[0]); }
+
+    function handleFileSelect(file) {
+        const errEl = document.getElementById('photoError');
+        const errMsg = document.getElementById('photoErrorMsg');
+        errEl.classList.add('hidden');
+        if (!file) return;
+        const allowed = ['image/jpeg','image/jpg','image/png','image/webp'];
+        if (!allowed.includes(file.type)) { errMsg.textContent='Format tidak didukung. Gunakan JPG, PNG, atau WEBP.'; errEl.classList.remove('hidden'); return; }
+        if (file.size > 5*1024*1024) { errMsg.textContent='File terlalu besar. Maksimal 5 MB.'; errEl.classList.remove('hidden'); return; }
+        _selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            document.getElementById('previewImg').src = ev.target.result;
+            document.getElementById('photoFileName').textContent = file.name;
+            document.getElementById('photoFileSize').textContent = `(${(file.size/1024/1024).toFixed(2)} MB)`;
+            document.getElementById('dropEmpty').classList.add('hidden');
+            document.getElementById('dropPreview').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removePhoto(e) {
+        if (e) e.stopPropagation();
+        _selectedFile = null;
+        document.getElementById('photoInput').value = '';
+        document.getElementById('previewImg').src = '';
+        document.getElementById('dropEmpty').classList.remove('hidden');
+        document.getElementById('dropPreview').classList.add('hidden');
+        document.getElementById('photoError').classList.add('hidden');
+    }
+
+    // ── Submit ──
+    async function submitOrder() {
+        const btn = document.getElementById('btnSubmit');
+        const errBox = document.getElementById('orderError');
+        const errMsg = document.getElementById('orderErrorMsg');
+        const icon = document.getElementById('iconSubmit');
+        const text = document.getElementById('textSubmit');
+        
+        errBox.classList.add('hidden');
+
+        const name = document.getElementById('orderName').value.trim();
+        const wa   = document.getElementById('orderWa').value.trim();
+        const addr = document.getElementById('orderAddress').value.trim();
+        const svc  = document.getElementById('orderService').value;
+        const desc = document.getElementById('orderDesc').value.trim();
+
+        if (!name||!wa||!addr||!svc||!desc) {
+            errMsg.textContent = 'Semua field bertanda * wajib diisi.';
+            errBox.classList.remove('hidden');
+            return;
+        }
+
+        icon.setAttribute('data-lucide', 'loader-2');
+        icon.classList.add('animate-spin');
+        text.textContent = 'Mengirim...';
+        lucide.createIcons();
+        btn.disabled = true;
+
+        const fd = new FormData();
+        fd.append('name', name); fd.append('whatsapp', wa);
+        fd.append('address', addr); fd.append('service', svc); fd.append('description', desc);
+        if (_selectedFile) fd.append('photo', _selectedFile);
+
+        try {
+            const res = await fetch('/api/orders', { method:'POST', body: fd });
+            const data = await res.json();
+            if (data.success) {
+                closeModal();
+                showToast(`✅ Pesanan diterima! ID: ${data.jobId}`);
+                setTimeout(() => window.location.href = `/progress.html?id=${data.jobId}`, 1500);
+            } else {
+                errMsg.textContent = data.message;
+                errBox.classList.remove('hidden');
+            }
+        } catch {
+            errMsg.textContent = 'Gagal terhubung ke server.';
+            errBox.classList.remove('hidden');
+        } finally {
+            icon.setAttribute('data-lucide', 'send');
+            icon.classList.remove('animate-spin');
+            text.textContent = 'Kirim Pesanan';
+            lucide.createIcons();
+            btn.disabled = false;
+        }
+    }
+
+    // ── Load Settings dari API ──
+    async function loadSettings() {
+        try {
+            const r = await fetch('/api/settings');
+            const d = await r.json();
+            if (d.success) {
+                const s = d.data;
+                // Hero
+                if (s.hero_title) document.getElementById('heroTitle').innerHTML = s.hero_title.replace(/\n/g, '<br/>');
+                if (s.hero_subtitle) document.getElementById('heroSubtitle').textContent = s.hero_subtitle;
+                // Company Name (Nav & Footer)
+                if (s.company_name) {
+                    const htmlName = s.company_name;
+                    document.getElementById('navCompanyName').textContent = htmlName;
+                    document.getElementById('footerCompanyName').textContent = htmlName;
+                    document.getElementById('footerCopyName').textContent = htmlName;
+                    document.title = `${htmlName} - Jasa Perbaikan Rumah Profesional`;
+                }
+                // Contact Info (Footer & WA)
+                if (s.company_email) document.getElementById('footerEmail').textContent = s.company_email;
+                if (s.company_phone) {
+                    document.getElementById('footerPhone').textContent = s.company_phone;
+                    
+                    // Format phone to 628...
+                    let waPhone = s.company_phone.replace(/\D/g, '');
+                    if (waPhone.startsWith('0')) waPhone = '62' + waPhone.substring(1);
+                    const waBtn = document.getElementById('floatingWa');
+                    waBtn.href = `https://wa.me/${waPhone}?text=Halo%20Admin%20Tukang%20Siaga,%20saya%20butuh%20bantuan%20layanan...`;
+                    waBtn.classList.remove('hidden');
+                    waBtn.classList.add('flex');
+                }
+                if (s.company_address) document.getElementById('footerAddress').textContent = s.company_address;
+                if (s.company_coverage) document.getElementById('footerCoverage').textContent = 'Area Cakupan: ' + s.company_coverage;
+                if (s.about_text) document.getElementById('footerAboutText').textContent = s.about_text;
+                // Logo
+                if (s.company_logo) {
+                    const navImg = document.getElementById('navLogoImg');
+                    const footImg = document.getElementById('footerLogoImg');
+                    navImg.src = s.company_logo; footImg.src = s.company_logo;
+                    navImg.classList.remove('hidden'); footImg.classList.remove('hidden');
+                    document.getElementById('navLogoIcon').classList.add('hidden');
+                    document.getElementById('footerLogoIcon').classList.add('hidden');
+                    
+                    document.getElementById('navLogoContainer').classList.replace('bg-brand-600', 'bg-transparent');
+                    document.getElementById('footerLogoContainer').classList.replace('bg-brand-600', 'bg-transparent');
+                }
+                document.getElementById('footerYear').textContent = new Date().getFullYear();
+            }
+        } catch(e) {}
+    }
+
+    // ── Load Services dari API ──
+    async function loadServices() {
+        try {
+            const r = await fetch('/api/services');
+            const d = await r.json();
+            if (!d.success || d.data.length === 0) return;
+
+            const grid = document.getElementById('services-grid');
+            const sel = document.getElementById('orderService');
+            grid.innerHTML = '';
+            sel.innerHTML = '<option value="">— Pilih Layanan —</option>';
+
+            d.data.forEach(s => {
+                sel.innerHTML += `<option value="${s.name}">${s.name}</option>`;
+                grid.innerHTML += `
+                <div class="card-hover bg-white rounded-xl border border-slate-200 flex flex-col hover:border-brand-300 transition-all">
+                    <div class="p-6 flex-1">
+                        <div class="mb-4 h-11 w-11 flex items-center justify-center rounded-xl bg-brand-100 text-brand-600 text-lg">
+                            <i data-lucide="${s.icon}" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 mb-1">${s.name}</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">${s.description}</p>
+                        <div class="mt-4 pt-4 border-t border-slate-100">
+                            <p class="text-xs text-slate-400 font-medium mb-0.5">Estimasi mulai dari</p>
+                            <p class="text-xl font-extrabold text-brand-700">${fmtRp(s.starting_price)}</p>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6">
+                        <button onclick="openModal()" class="w-full rounded-lg border border-brand-200 bg-brand-50 hover:bg-brand-600 hover:border-brand-600 text-brand-700 hover:text-white px-4 py-2.5 text-sm font-semibold transition-all flex justify-center items-center gap-2">
+                            Pesan Sekarang
+                        </button>
+                    </div>
+                </div>`;
+            });
+
+            // Juga load galeri dari API (replace static)
+            await loadGallery();
+            lucide.createIcons();
+        } catch(e) {}
+    }
+
+    let _allGalleryItems = [];
+    
+    function renderGallery(filterCategory = 'Semua') {
+        const grid = document.getElementById('gallery-grid');
+        grid.innerHTML = '';
+        
+        const filtered = filterCategory === 'Semua' 
+            ? _allGalleryItems 
+            : _allGalleryItems.filter(img => img.category === filterCategory);
+            
+        if (filtered.length === 0) {
+            grid.innerHTML = '<p class="col-span-full text-center py-10 text-slate-400">Belum ada foto untuk kategori ini.</p>';
+            return;
+        }
+        
+        filtered.forEach(img => {
+            grid.innerHTML += `
+            <div class="group relative overflow-hidden rounded-xl bg-slate-100 border border-slate-200 aspect-[4/3] card-hover">
+                <img src="${img.image_url}" alt="${img.title}" loading="lazy"
+                    onerror="this.src='https://placehold.co/600x450/dbeafe/1d4ed8?text=${encodeURIComponent(img.title)}'"
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-4">
+                    <span class="text-white text-sm font-semibold mb-0.5">${img.title}</span>
+                    <span class="text-brand-300 text-[10px] uppercase font-bold tracking-wider">${img.category || 'Umum'}</span>
+                </div>
+            </div>`;
+        });
+    }
+
+    function setGalleryFilter(category) {
+        document.querySelectorAll('.gal-btn').forEach(btn => {
+            if (btn.dataset.cat === category) {
+                btn.classList.add('bg-brand-600', 'text-white', 'border-brand-600');
+                btn.classList.remove('bg-white', 'text-slate-600', 'border-slate-200', 'hover:bg-slate-50');
+            } else {
+                btn.classList.remove('bg-brand-600', 'text-white', 'border-brand-600');
+                btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200', 'hover:bg-slate-50');
+            }
+        });
+        renderGallery(category);
+    }
+
+    window.setGalleryFilter = setGalleryFilter; // Export to window
+
+    async function loadGallery() {
+        try {
+            const r = await fetch('/api/gallery');
+            const d = await r.json();
+            if (!d.success || d.data.length === 0) return;
+            
+            _allGalleryItems = d.data;
+            
+            // Extract unique categories
+            const categories = ['Semua'];
+            _allGalleryItems.forEach(img => {
+                const cat = img.category || 'Umum';
+                if (!categories.includes(cat)) categories.push(cat);
+            });
+            
+            // Render filter buttons
+            const filterContainer = document.getElementById('gallery-filters');
+            filterContainer.innerHTML = categories.map(cat => `
+                <button data-cat="${cat}" onclick="setGalleryFilter('${cat}')" 
+                    class="gal-btn rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${cat === 'Semua' ? 'bg-brand-600 text-white border-brand-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}">
+                    ${cat}
+                </button>
+            `).join('');
+
+            renderGallery('Semua');
+        } catch(e) {}
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+        loadSettings();
+        loadServices();
+    });
+</script>
+</body>
+</html>

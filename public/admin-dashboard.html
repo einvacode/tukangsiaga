@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Dashboard - Tukang Siaga</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { brand: { 50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',300:'#93c5fd',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#1e3a8a' } } } }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+        html, body { height: 100%; }
+        @media print {
+            body > *:not(#printOnly) { display: none !important; }
+            #printOnly { display: block !important; }
+            @page { margin: 0; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased flex flex-col h-full">
+<div id="printOnly" class="hidden"></div>
+
+<!-- ===== TOP NAV ===== -->
+<header class="no-print shrink-0 border-b border-slate-200 bg-white shadow-sm">
+    <div class="flex h-14 items-center gap-4 px-6">
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2.5 font-bold text-base shrink-0 text-slate-900">
+            <div class="h-8 w-8 rounded-lg bg-brand-600 flex items-center justify-center text-white shadow-sm">
+                <i data-lucide="hammer" class="w-4 h-4"></i>
+            </div>
+            Tukang<span class="text-brand-600">Siaga</span>
+        </a>
+        <div class="h-5 w-px bg-slate-200 mx-1"></div>
+
+        <!-- Tab Nav -->
+        <nav class="flex items-center gap-1" id="tabNav">
+            <button onclick="switchTab('orders')" data-tab="orders" class="tab-btn flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-semibold rounded-lg transition-colors">
+                <i data-lucide="clipboard-list" class="w-4 h-4"></i> Pesanan
+            </button>
+            <button onclick="switchTab('services')" data-tab="services" class="tab-btn flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-semibold rounded-lg transition-colors">
+                <i data-lucide="wrench" class="w-4 h-4"></i> Layanan
+            </button>
+            <button onclick="switchTab('techs')" data-tab="techs" class="tab-btn flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-semibold rounded-lg transition-colors">
+                <i data-lucide="users" class="w-4 h-4"></i> Pengguna
+            </button>
+            <button onclick="switchTab('gallery')" data-tab="gallery" class="tab-btn flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-semibold rounded-lg transition-colors">
+                <i data-lucide="image" class="w-4 h-4"></i> Galeri
+            </button>
+            <button onclick="switchTab('settings')" data-tab="settings" class="tab-btn flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-semibold rounded-lg transition-colors">
+                <i data-lucide="settings" class="w-4 h-4"></i> Pengaturan
+            </button>
+        </nav>
+
+        <div class="ml-auto flex items-center gap-4">
+            <div class="hidden sm:flex items-center gap-2 text-sm">
+                <div class="h-7 w-7 rounded-full bg-brand-600 flex items-center justify-center text-white text-xs font-bold" id="adminAvatar">A</div>
+                <span id="adminName" class="font-medium text-slate-700"></span>
+            </div>
+            <button onclick="logout()" class="flex items-center gap-1.5 text-sm font-medium text-slate-400 hover:text-red-600 transition-colors">
+                <i data-lucide="log-out" class="w-4 h-4"></i> Keluar
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main class="flex-1 overflow-y-auto p-6">
+    <div class="mx-auto max-w-6xl space-y-6">
+
+        <!-- Stats -->
+        <div id="statsRow" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+
+        <!-- ===== TAB: ORDERS ===== -->
+        <div id="tab-orders" class="tab-panel space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-base font-bold text-slate-900">Manajemen Pesanan</h2>
+                <select id="filterStatus" onchange="loadOrders()" class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm">
+                    <option value="">Semua Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="assigned">Ditugaskan</option>
+                    <option value="on_the_way">Menuju Lokasi</option>
+                    <option value="in_progress">Dikerjakan</option>
+                    <option value="completed">Selesai</option>
+                    <option value="cancelled">Dibatalkan</option>
+                </select>
+            </div>
+            <div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100">
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">ID / Tanggal</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Pelanggan</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Layanan</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Tukang</th>
+                                <th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody" class="divide-y divide-slate-100">
+                            <tr><td colspan="6" class="px-4 py-10 text-center text-slate-400 text-sm">Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TAB: SERVICES ===== -->
+        <div id="tab-services" class="tab-panel hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-base font-bold text-slate-900">Manajemen Layanan & Harga</h2>
+                <button onclick="openAddService()" class="flex items-center gap-2 rounded-lg bg-brand-600 hover:bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition-colors shadow-sm">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Tambah Layanan
+                </button>
+            </div>
+            <div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 border-b border-slate-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Layanan</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Deskripsi</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Harga Mulai (Rp)</th>
+                                <th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicesTableBody" class="divide-y divide-slate-100">
+                            <tr><td colspan="4" class="px-4 py-10 text-center text-slate-400">Memuat...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TAB: TECHS (USERS) ===== -->
+        <div id="tab-techs" class="tab-panel hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-base font-bold text-slate-900">Manajemen Pengguna (Admin & Tukang)</h2>
+                <button onclick="openAddUser()" class="flex items-center gap-2 rounded-lg bg-brand-600 hover:bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition-colors shadow-sm">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah Pengguna
+                </button>
+            </div>
+            <div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 border-b border-slate-100">
+                            <tr>
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">Nama</th>
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">Username</th>
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">Password (Ubah)</th>
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">No. WhatsApp</th>
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">Role</th>
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                                <th class="px-3 py-3 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="techsTableBody" class="divide-y divide-slate-100">
+                            <tr><td colspan="7" class="px-4 py-10 text-center text-slate-400">Memuat...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== TAB: GALLERY ===== -->
+        <div id="tab-gallery" class="tab-panel hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-base font-bold text-slate-900">Manajemen Galeri</h2>
+                <button onclick="openAddGallery()" class="flex items-center gap-2 rounded-lg bg-brand-600 hover:bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition-colors shadow-sm">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Tambah Foto
+                </button>
+            </div>
+            <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="animate-pulse rounded-xl bg-slate-200 aspect-video"></div>
+                <div class="animate-pulse rounded-xl bg-slate-200 aspect-video"></div>
+                <div class="animate-pulse rounded-xl bg-slate-200 aspect-video"></div>
+                <div class="animate-pulse rounded-xl bg-slate-200 aspect-video"></div>
+            </div>
+        </div>
+
+        <!-- ===== TAB: SETTINGS ===== -->
+        <div id="tab-settings" class="tab-panel hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-base font-bold text-slate-900">Pengaturan Website</h2>
+                <button onclick="saveSettings()" id="btnSaveSettings" class="flex items-center gap-2 rounded-lg bg-brand-600 hover:bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition-colors shadow-sm">
+                    <i data-lucide="save" class="w-4 h-4" id="iconSaveSettings"></i> <span id="textSaveSettings">Simpan Pengaturan</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Info Perusahaan -->
+                <div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                    <div class="bg-slate-50 px-5 py-3 border-b border-slate-100">
+                        <h3 class="font-bold text-sm text-slate-800">Informasi Perusahaan</h3>
+                    </div>
+                    <div class="p-5 space-y-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Nama Website</label>
+                            <input id="set_company_name" type="text" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Email Kontak</label>
+                            <input id="set_company_email" type="email" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Nomor WhatsApp</label>
+                            <input id="set_company_phone" type="text" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Alamat / Wilayah</label>
+                            <input id="set_company_address" type="text" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Area Cakupan</label>
+                            <input id="set_company_coverage" type="text" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                        </div>
+                        <div class="space-y-1.5 pt-4 border-t border-slate-100">
+                            <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Info Rekening (Untuk Invoice)</label>
+                            <input id="set_company_bank" type="text" placeholder="Bank BCA - 123456789 a.n. Tukang Siaga" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Kategori Galeri -->
+                    <div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                        <div class="bg-slate-50 px-5 py-3 border-b border-slate-100">
+                            <h3 class="font-bold text-sm text-slate-800">Pengaturan Kategori Galeri</h3>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Daftar Kategori (Pisahkan dengan Koma)</label>
+                                <textarea id="set_gallery_categories" rows="2" placeholder="Umum, Atap, Pipa, Plafon" class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition resize-none"></textarea>
+                                <p class="text-[10px] text-slate-400">Contoh: Umum, Atap & Genteng, Pipa Air</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logo Upload -->
+                    <div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                        <div class="bg-slate-50 px-5 py-3 border-b border-slate-100">
+                            <h3 class="font-bold text-sm text-slate-800">Logo Perusahaan</h3>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center gap-4">
+                                <div class="h-16 w-16 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden shrink-0 text-slate-300">
+                                    <img id="currentLogo" src="" alt="Logo" class="w-full h-full object-contain hidden">
+                                    <i id="noLogoIcon" data-lucide="image" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <input type="file" id="logoInput" accept=".png,.jpg,.jpeg,.webp" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 transition-colors w-full cursor-pointer">
+                                    <p class="text-[10px] text-slate-400 mt-1">Disarankan: PNG transparan (Maks 1MB)</p>
+                                </div>
+                                <button onclick="uploadLogo()" id="btnUploadLogo" class="shrink-0 rounded-lg bg-slate-900 hover:bg-slate-800 px-3 py-2 text-xs font-semibold text-white transition-colors flex items-center justify-center min-w-[70px]">
+                                    <span id="textUploadLogo">Upload</span>
+                                    <i id="iconUploadLogo" data-lucide="loader-2" class="w-4 h-4 animate-spin hidden"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sistem & Database -->
+                    <div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                        <div class="bg-slate-50 px-5 py-3 border-b border-slate-100">
+                            <h3 class="font-bold text-sm text-slate-800">Sistem & Pemeliharaan</h3>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-700">Backup Sistem</h4>
+                                    <p class="text-[10px] text-slate-500">Unduh database dan foto ke PC Anda.</p>
+                                </div>
+                                <a href="/api/admin/backup" class="shrink-0 rounded-lg border border-brand-200 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 text-xs font-semibold text-brand-700 transition-colors flex items-center gap-1.5">
+                                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Backup
+                                </a>
+                            </div>
+                            <hr class="border-slate-100">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-700">Restore Sistem</h4>
+                                    <p class="text-[10px] text-slate-500">Pulihkan dari file backup (.tar.gz).</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="file" id="restoreInput" accept=".gz,.tar.gz" class="hidden" onchange="restoreSystem()">
+                                    <button onclick="document.getElementById('restoreInput').click()" class="shrink-0 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 px-3 py-1.5 text-xs font-semibold text-red-700 transition-colors flex items-center gap-1.5">
+                                        <i data-lucide="upload" class="w-3.5 h-3.5"></i> Restore
+                                    </button>
+                                </div>
+                            </div>
+                            <hr class="border-slate-100">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-700">Update via Git</h4>
+                                    <p class="text-[10px] text-slate-500">Tarik pembaruan terbaru (git pull).</p>
+                                </div>
+                                <button onclick="updateSystem()" class="shrink-0 rounded-lg bg-slate-900 hover:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-white transition-colors flex items-center gap-1.5">
+                                    <i data-lucide="github" class="w-3.5 h-3.5"></i> Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- ===== MODAL: UPDATE STATUS ===== -->
+<div id="statusModal" class="no-print fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden">
+        <div class="h-1 bg-gradient-to-r from-brand-500 to-brand-700"></div>
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="h-8 w-8 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600"><i data-lucide="edit" class="w-4 h-4"></i></div>
+                <h3 class="text-base font-bold text-slate-900">Update Status</h3>
+            </div>
+            <button onclick="closeStatusModal()" class="h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div class="px-6 py-5 space-y-4">
+            <div class="bg-slate-50 rounded-lg px-4 py-3">
+                <p class="text-xs text-slate-400 font-medium">ID Pekerjaan</p>
+                <p id="modalJobId" class="font-bold text-lg text-slate-900 font-mono mt-0.5"></p>
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Status Baru</label>
+                <select id="modalStatus" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white">
+                    <option value="pending">Pending</option>
+                    <option value="assigned">Ditugaskan</option>
+                    <option value="on_the_way">Tukang Menuju Lokasi</option>
+                    <option value="in_progress">Sedang Dikerjakan</option>
+                    <option value="completed">Selesai</option>
+                    <option value="cancelled">Dibatalkan</option>
+                </select>
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Pilih Tukang</label>
+                <select id="modalTechnician" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white"></select>
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Catatan Internal (Opsional)</label>
+                <textarea id="modalNotes" rows="2" class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white resize-none"></textarea>
+            </div>
+            <button onclick="saveStatus()" id="btnSaveStatus" class="w-full rounded-lg bg-brand-600 hover:bg-brand-700 py-3 text-sm font-bold text-white shadow-sm transition-all flex items-center justify-center gap-2">
+                <i data-lucide="save" class="w-4 h-4" id="iconSaveStatus"></i> <span id="textSaveStatus">Simpan Perubahan</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL: TAMBAH GALERI ===== -->
+<div id="galleryModal" class="no-print fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden">
+        <div class="h-1 bg-gradient-to-r from-brand-500 to-brand-700"></div>
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="h-8 w-8 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600"><i data-lucide="image" class="w-4 h-4"></i></div>
+                <h3 class="text-base font-bold text-slate-900">Tambah Foto Galeri</h3>
+            </div>
+            <button onclick="closeAddGallery()" class="h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div class="px-6 py-5 space-y-4">
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Kategori (Layanan)</label>
+                <select id="galleryCategory" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white">
+                    <option value="Umum">Umum</option>
+                </select>
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Upload Gambar</label>
+                <input id="galleryFile" type="file" accept=".png,.jpg,.jpeg,.webp" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 transition-colors w-full cursor-pointer h-10">
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Judul Proyek</label>
+                <input id="galleryTitle" type="text" placeholder="Contoh: Perbaikan Atap..." class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white">
+            </div>
+            <div id="galleryPreview" class="hidden rounded-lg overflow-hidden border border-slate-200 aspect-video bg-slate-100 mt-2 relative group">
+                <img id="galleryPreviewImg" src="" alt="" class="w-full h-full object-cover">
+            </div>
+            <div class="flex gap-3">
+                <button onclick="closeAddGallery()" class="flex-1 rounded-lg border border-slate-200 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">Batal</button>
+                <button onclick="addGallery()" class="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 py-2.5 text-sm font-bold text-white transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Tambahkan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL: TAMBAH LAYANAN ===== -->
+<div id="serviceModal" class="no-print fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden">
+        <div class="h-1 bg-gradient-to-r from-brand-500 to-brand-700"></div>
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="h-8 w-8 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600"><i data-lucide="wrench" class="w-4 h-4"></i></div>
+                <h3 class="text-base font-bold text-slate-900">Tambah Layanan Baru</h3>
+            </div>
+            <button onclick="closeAddService()" class="h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div class="px-6 py-5 space-y-4">
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Nama Layanan</label>
+                <input id="serviceName" type="text" placeholder="Contoh: Perbaikan AC" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white">
+            </div>
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Deskripsi</label>
+                <textarea id="serviceDesc" rows="2" placeholder="Deskripsi singkat..." class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white resize-none"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Harga Mulai (Rp)</label>
+                    <input id="servicePrice" type="number" placeholder="100000" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Nama Icon Lucide</label>
+                    <input id="serviceIcon" type="text" placeholder="wrench" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white">
+                </div>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeAddService()" class="flex-1 rounded-lg border border-slate-200 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">Batal</button>
+                <button onclick="addService()" class="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 py-2.5 text-sm font-bold text-white transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Tambahkan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL: TAMBAH PENGGUNA ===== -->
+<div id="techModal" class="no-print fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden">
+        <div class="h-1 bg-gradient-to-r from-brand-500 to-brand-700"></div>
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="h-8 w-8 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600"><i data-lucide="user-plus" class="w-4 h-4"></i></div>
+                <h3 class="text-base font-bold text-slate-900">Tambah Pengguna</h3>
+            </div>
+            <button onclick="closeAddUser()" class="h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div class="px-6 py-5 space-y-4">
+            <div class="space-y-1.5">
+                <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Nama Lengkap</label>
+                <input id="techName" type="text" placeholder="Budi Santoso" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">No. WhatsApp</label>
+                    <input id="techWa" type="text" placeholder="081234567890" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Role Akses</label>
+                    <select id="techRole" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white">
+                        <option value="technician">Tukang</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Username Login</label>
+                    <input id="techUsername" type="text" placeholder="budi123" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Password Login</label>
+                    <input id="techPassword" type="password" placeholder="********" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white">
+                </div>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeAddUser()" class="flex-1 rounded-lg border border-slate-200 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">Batal</button>
+                <button onclick="addUser()" class="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 py-2.5 text-sm font-bold text-white transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Tambahkan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL: PRINT ===== -->
+<div id="printModal" class="no-print fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="w-full max-w-2xl bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="flex flex-wrap items-center gap-2 border-b border-slate-100 px-6 py-4 shrink-0 bg-slate-50">
+            <div class="flex bg-slate-200 rounded-lg p-1 mr-auto">
+                <button onclick="renderDoc('sph')" id="btnTab-sph" class="print-tab-btn rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">SPH</button>
+                <button onclick="renderDoc('workorder')" id="btnTab-workorder" class="print-tab-btn rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">SPK</button>
+                <button onclick="renderDoc('invoice')" id="btnTab-invoice" class="print-tab-btn rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors">Invoice</button>
+            </div>
+            <button onclick="window.print()" class="flex items-center gap-2 rounded-lg bg-brand-600 hover:bg-brand-700 px-4 py-2 text-sm font-bold text-white transition-colors shadow-sm">
+                <i data-lucide="printer" class="w-4 h-4 text-white"></i> Cetak Sekarang
+            </button>
+            <button onclick="closePrintModal()" class="ml-2 h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-200 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div id="docPreview" class="overflow-y-auto flex-1 p-6"></div>
+    </div>
+</div>
+
+<!-- ===== MODAL: ITEMS ===== -->
+<div id="itemsModal" class="no-print fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="w-full max-w-2xl bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="h-8 w-8 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600"><i data-lucide="list-todo" class="w-4 h-4"></i></div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Rincian Biaya / Material</h3>
+                    <p id="itemsModalJobId" class="text-xs text-slate-500 font-mono"></p>
+                </div>
+            </div>
+            <button onclick="closeItemsModal()" class="h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-200 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div class="overflow-y-auto flex-1 p-6">
+            <table class="w-full text-sm mb-4">
+                <thead class="bg-slate-50 border-b border-slate-100">
+                    <tr>
+                        <th class="px-3 py-2 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">Uraian</th>
+                        <th class="px-3 py-2 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider w-20">Qty</th>
+                        <th class="px-3 py-2 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider w-32">Harga Satuan</th>
+                        <th class="px-3 py-2 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider w-32">Subtotal</th>
+                        <th class="px-3 py-2 w-10"></th>
+                    </tr>
+                </thead>
+                <tbody id="itemsTableBody" class="divide-y divide-slate-100"></tbody>
+                <tfoot>
+                    <tr class="bg-slate-50 font-bold border-t border-slate-200">
+                        <td colspan="3" class="px-3 py-3 text-right">TOTAL KESELURUHAN</td>
+                        <td class="px-3 py-3 text-right text-brand-700" id="itemsTotalVal">Rp 0</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <button onclick="addItemRow()" class="flex items-center gap-2 rounded-lg border border-dashed border-slate-300 hover:border-brand-500 hover:bg-brand-50 px-4 py-2 text-sm font-semibold text-slate-600 hover:text-brand-700 transition-colors w-full justify-center mt-4">
+                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Baris
+            </button>
+            <hr class="my-6 border-slate-200">
+            <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Total Uang Muka (DP) dari Pelanggan</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-slate-500 sm:text-sm">Rp</span>
+                        </div>
+                        <input type="number" id="itemsDp" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white" placeholder="0">
+                    </div>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Total Pengeluaran Internal (HPP)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-slate-500 sm:text-sm">Rp</span>
+                        </div>
+                        <input type="number" id="itemsExpense" class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white" placeholder="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex gap-3 px-6 py-4 border-t border-slate-100 bg-white shrink-0">
+            <button onclick="closeItemsModal()" class="flex-1 rounded-lg border border-slate-200 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">Batal</button>
+            <button onclick="saveItems()" class="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 py-2.5 text-sm font-bold text-white transition-colors flex items-center justify-center gap-2 shadow-sm">
+                <i data-lucide="save" class="w-4 h-4"></i> Simpan Rincian
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast" class="no-print fixed bottom-6 right-6 z-[100] hidden">
+    <div id="toastInner" class="flex items-center gap-3 rounded-xl border bg-white shadow-lg shadow-slate-200 px-4 py-3 text-sm font-semibold"></div>
+</div>
+
+<script>
+// ── Utils ──────────────────────────────────
+const fmtRp   = n => new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(n||0);
+const fmtDate = d => d ? new Date(d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '-';
+const fmtDateLong = d => d ? new Date(d).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}) : '-';
+
+const STATUS_CFG = {
+    pending:     { label:'Pending',          cls:'bg-amber-50 border-amber-200 text-amber-700' },
+    assigned:    { label:'Ditugaskan',        cls:'bg-blue-50 border-blue-200 text-blue-700' },
+    on_the_way:  { label:'Menuju Lokasi',     cls:'bg-indigo-50 border-indigo-200 text-indigo-700' },
+    in_progress: { label:'Sedang Dikerjakan', cls:'bg-violet-50 border-violet-200 text-violet-700' },
+    completed:   { label:'Selesai',           cls:'bg-green-50 border-green-200 text-green-700' },
+    cancelled:   { label:'Dibatalkan',        cls:'bg-red-50 border-red-200 text-red-700' },
+};
+
+function badge(status) {
+    const s = STATUS_CFG[status]||STATUS_CFG.pending;
+    return `<span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold ${s.cls}">${s.label}</span>`;
+}
+
+function showToast(msg, err=false) {
+    const t = document.getElementById('toast');
+    const i = document.getElementById('toastInner');
+    i.className = `flex items-center gap-3 rounded-xl border bg-white shadow-lg shadow-slate-200 px-4 py-3 text-sm font-semibold ${err?'border-red-200 text-red-700':'border-slate-200 text-slate-900'}`;
+    i.innerHTML = `<i data-lucide="${err?'alert-circle':'check-circle'}" class="w-5 h-5 ${err?'text-red-500':'text-green-500'}"></i> ${msg}`;
+    t.classList.remove('hidden');
+    lucide.createIcons();
+    setTimeout(()=>t.classList.add('hidden'),3500);
+}
+
+// ── Auth Guard ──────────────────────────────
+const _admin = sessionStorage.getItem('ts_admin');
+if (!_admin) { window.location.href='/admin-login.html'; }
+else {
+    const u = JSON.parse(_admin);
+    const name = u.name || u.username;
+    document.getElementById('adminName').textContent = name;
+    document.getElementById('adminAvatar').textContent = name.charAt(0).toUpperCase();
+}
+function logout() { sessionStorage.removeItem('ts_admin'); window.location.href='/admin-login.html'; }
+
+// ── Tabs ────────────────────────────────────
+function switchTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b=>{
+        b.classList.remove('bg-brand-600','text-white','shadow-sm');
+        b.classList.add('text-slate-600','hover:text-slate-900','hover:bg-slate-100');
+    });
+    document.getElementById(`tab-${name}`).classList.remove('hidden');
+    const btn = document.querySelector(`[data-tab="${name}"]`);
+    btn.classList.add('bg-brand-600','text-white','shadow-sm');
+    btn.classList.remove('text-slate-600','hover:text-slate-900','hover:bg-slate-100');
+
+    if (name==='services') loadServices();
+    if (name==='gallery')  loadGallery();
+    if (name==='techs')    loadTechs();
+}
+switchTab('orders');
+
+// ── Stats ───────────────────────────────────
+async function loadStats() {
+    try {
+        const r = await fetch('/api/admin/orders');
+        const d = await r.json();
+        if (!d.success) return;
+        const o = d.data;
+        const stats = [
+            { label:'Total Pesanan', val:o.length, icon:'clipboard-list', bg:'bg-brand-100', tc:'text-brand-600' },
+            { label:'Menunggu',       val:o.filter(x=>x.current_status==='pending').length, icon:'clock', bg:'bg-amber-100', tc:'text-amber-600' },
+            { label:'Sedang Aktif',   val:o.filter(x=>['assigned','on_the_way','in_progress'].includes(x.current_status)).length, icon:'wrench', bg:'bg-violet-100', tc:'text-violet-600' },
+            { label:'Selesai',        val:o.filter(x=>x.current_status==='completed').length, icon:'check-circle', bg:'bg-green-100', tc:'text-green-600' },
+        ];
+        
+        let income = 0;
+        let expense = 0;
+        let total_dp = 0;
+        
+        o.forEach(x => {
+            if (x.current_status === 'completed') {
+                income += Number(x.final_price || 0);
+                expense += Number(x.expense_amount || 0);
+            }
+            if (x.current_status !== 'cancelled') {
+                total_dp += Number(x.dp_amount || 0);
+            }
+        });
+        
+        const laba = income - expense;
+        
+        const fStats = [
+            { label:'Pendapatan (Selesai)', val:'Rp ' + income.toLocaleString('id-ID'), icon:'wallet', bg:'bg-emerald-100', tc:'text-emerald-600' },
+            { label:'Pengeluaran (Selesai)', val:'Rp ' + expense.toLocaleString('id-ID'), icon:'credit-card', bg:'bg-rose-100', tc:'text-rose-600' },
+            { label:'Laba Bersih', val:'Rp ' + laba.toLocaleString('id-ID'), icon:'trending-up', bg:'bg-blue-100', tc:'text-blue-600' },
+            { label:'Total Uang Muka (DP)', val:'Rp ' + total_dp.toLocaleString('id-ID'), icon:'coins', bg:'bg-indigo-100', tc:'text-indigo-600' },
+        ];
+        
+        document.getElementById('statsRow').innerHTML = stats.map(s=>`
+            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm flex items-center gap-4">
+                <div class="h-11 w-11 shrink-0 rounded-xl ${s.bg} flex items-center justify-center ${s.tc}">
+                    <i data-lucide="${s.icon}" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide">${s.label}</p>
+                    <p class="text-2xl font-extrabold text-slate-900 mt-0.5">${s.val}</p>
+                </div>
+            </div>`).join('') + fStats.map(s=>`
+            <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm flex items-center gap-4">
+                <div class="h-11 w-11 shrink-0 rounded-xl ${s.bg} flex items-center justify-center ${s.tc}">
+                    <i data-lucide="${s.icon}" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">${s.label}</p>
+                    <p class="text-lg font-extrabold text-slate-900 mt-0.5">${s.val}</p>
+                </div>
+            </div>`).join('');
+        lucide.createIcons();
+    } catch(e){}
+}
+
+// ── Orders ──────────────────────────────────
+async function loadOrders() {
+    const filter = document.getElementById('filterStatus').value;
+    const tbody  = document.getElementById('ordersTableBody');
+    tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">Memuat...</td></tr>`;
+    try {
+        const r = await fetch('/api/admin/orders');
+        const d = await r.json();
+        if (!d.success) throw new Error();
+        const orders = filter ? d.data.filter(o=>o.current_status===filter) : d.data;
+
+        if (!orders.length) {
+            tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">Tidak ada pesanan.</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = orders.map(o=>`
+            <tr class="hover:bg-slate-50 transition-colors">
+                <td class="px-4 py-3.5">
+                    <p class="font-mono font-bold text-xs text-brand-700">${o.job_id}</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">${fmtDate(o.created_at)}</p>
+                </td>
+                <td class="px-4 py-3.5">
+                    <p class="font-semibold text-sm text-slate-900">${o.customer_name}</p>
+                    <p class="text-[11px] text-slate-400">${o.customer_whatsapp}</p>
+                </td>
+                <td class="px-4 py-3.5 text-sm text-slate-600">${o.service_type}</td>
+                <td class="px-4 py-3.5">${badge(o.current_status)}</td>
+                <td class="px-4 py-3.5 text-sm text-slate-600">${o.technician_name||'<span class="text-slate-300 italic text-xs">Belum</span>'}</td>
+                <td class="px-4 py-3.5 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                        <a href="/progress.html?id=${o.job_id}" target="_blank"
+                            title="Lihat Progres"
+                            class="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-brand-600 transition-colors">
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </a>
+                        <button onclick="openItemsModal(${o.id})"
+                            title="Rincian Biaya & Material"
+                            class="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-brand-600 transition-colors">
+                            <i data-lucide="list-todo" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="openPrintModal(${o.id})"
+                            title="Cetak Dokumen"
+                            class="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-brand-600 transition-colors">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="deleteOrder(${o.id})"
+                            title="Hapus Pesanan"
+                            class="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="openStatusModal(${o.id},'${o.current_status}','${o.job_id}',${o.technician_id||'null'})"
+                            class="h-8 px-3 flex items-center justify-center rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-colors">
+                            Update
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join('');
+        lucide.createIcons();
+    } catch(e) {
+        tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-10 text-center text-red-500">Gagal memuat data.</td></tr>`;
+    }
+}
+
+// ── Status Modal ────────────────────────────
+let _currentOrderId = null;
+async function openStatusModal(id, status, jobId, techId) {
+    _currentOrderId = id;
+    document.getElementById('modalJobId').textContent   = jobId;
+    document.getElementById('modalStatus').value        = status;
+    document.getElementById('modalNotes').value         = '';
+    const sel = document.getElementById('modalTechnician');
+    sel.innerHTML = '<option value="">— Pilih Tukang —</option>';
+    try {
+        const r = await fetch('/api/admin/technicians');
+        const d = await r.json();
+        if (d.success) d.data.forEach(t=>{
+            sel.innerHTML += `<option value="${t.id}" ${t.id==techId?'selected':''}>${t.name} — ${t.phone_number}</option>`;
+        });
+    } catch(e){}
+    document.getElementById('statusModal').classList.replace('hidden','flex');
+}
+function closeStatusModal() { document.getElementById('statusModal').classList.replace('flex','hidden'); }
+
+async function saveStatus() {
+    const btn = document.getElementById('btnSaveStatus');
+    const icon = document.getElementById('iconSaveStatus');
+    const text = document.getElementById('textSaveStatus');
+    
+    icon.setAttribute('data-lucide', 'loader-2');
+    icon.classList.add('animate-spin');
+    text.textContent = 'Menyimpan...';
+    lucide.createIcons();
+    btn.disabled  = true;
+    
+    try {
+        const res = await fetch(`/api/admin/orders/${_currentOrderId}/status`,{
+            method:'PATCH',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                status: document.getElementById('modalStatus').value,
+                notes:  document.getElementById('modalNotes').value,
+                technician_id: document.getElementById('modalTechnician').value||null
+            })
+        });
+        const data = await res.json();
+        if (data.success) { closeStatusModal(); showToast(data.message); loadOrders(); loadStats(); }
+        else showToast(data.message, true);
+    } catch { showToast('Gagal menyimpan.', true); }
+    finally { 
+        icon.setAttribute('data-lucide', 'save');
+        icon.classList.remove('animate-spin');
+        text.textContent = 'Simpan Perubahan';
+        lucide.createIcons();
+        btn.disabled=false; 
+    }
+}
+
+async function deleteOrder(id) {
+    if (!confirm('Hapus pesanan ini secara permanen? Data yang dihapus tidak dapat dikembalikan.')) return;
+    try {
+        const res = await fetch(`/api/admin/orders/${id}`, { method: 'DELETE' });
+        const d = await res.json();
+        d.success ? showToast(d.message) : showToast(d.message, true);
+        loadOrders();
+    } catch { showToast('Gagal menghapus pesanan.', true); }
+}
+
+// ── Services ────────────────────────────────
+async function loadServices() {
+    const tbody = document.getElementById('servicesTableBody');
+    tbody.innerHTML=`<tr><td colspan="4" class="px-4 py-10 text-center text-slate-400">Memuat...</td></tr>`;
+    try {
+        const r = await fetch('/api/services');
+        const d = await r.json();
+        if (!d.success||!d.data.length) { tbody.innerHTML=`<tr><td colspan="4" class="px-4 py-10 text-center text-slate-400">Tidak ada layanan.</td></tr>`; return; }
+        tbody.innerHTML = d.data.map(s=>`
+            <tr class="hover:bg-slate-50 transition-colors">
+                <td class="px-4 py-3.5">
+                    <div class="flex items-center gap-3">
+                        <div class="h-9 w-9 rounded-xl bg-brand-100 flex items-center justify-center text-brand-600 shrink-0">
+                            <i data-lucide="${s.icon}" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-semibold text-slate-900">${s.name}</span>
+                    </div>
+                </td>
+                <td class="px-4 py-3.5">
+                    <input type="text" value="${s.description}" id="desc-${s.id}"
+                        class="w-full h-9 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-700">
+                </td>
+                <td class="px-4 py-3.5">
+                    <input type="number" value="${s.starting_price}" id="price-${s.id}"
+                        class="w-36 h-9 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </td>
+                <td class="px-4 py-3.5 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                        <button onclick="saveService(${s.id},'${s.name}','${s.icon}')"
+                            class="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 transition-colors shadow-sm">
+                            <i data-lucide="save" class="w-3 h-3 text-brand-600"></i> Simpan
+                        </button>
+                        <button onclick="deleteService(${s.id})"
+                            title="Hapus Layanan"
+                            class="flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors shadow-sm">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join('');
+        lucide.createIcons();
+    } catch(e){}
+}
+
+async function saveService(id, name, icon) {
+    try {
+        const res = await fetch(`/api/admin/services/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,icon,description:document.getElementById(`desc-${id}`).value,starting_price:document.getElementById(`price-${id}`).value})});
+        const d = await res.json();
+        d.success ? showToast(d.message) : showToast(d.message,true);
+    } catch { showToast('Gagal menyimpan.',true); }
+}
+
+function openAddService() {
+    document.getElementById('serviceName').value = '';
+    document.getElementById('serviceDesc').value = '';
+    document.getElementById('servicePrice').value = '';
+    document.getElementById('serviceIcon').value = '';
+    document.getElementById('serviceModal').classList.replace('hidden', 'flex');
+}
+function closeAddService() { document.getElementById('serviceModal').classList.replace('flex', 'hidden'); }
+
+async function addService() {
+    const name = document.getElementById('serviceName').value;
+    const desc = document.getElementById('serviceDesc').value;
+    const price = document.getElementById('servicePrice').value;
+    const icon = document.getElementById('serviceIcon').value;
+    
+    if (!name || !price) { showToast('Nama dan harga wajib diisi.', true); return; }
+    
+    try {
+        const res = await fetch('/api/admin/services', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, description: desc, starting_price: price, icon })
+        });
+        const d = await res.json();
+        if (d.success) {
+            closeAddService();
+            showToast(d.message);
+            loadServices();
+        } else {
+            showToast(d.message, true);
+        }
+    } catch { showToast('Gagal menambahkan layanan.', true); }
+}
+
+async function deleteService(id) {
+    if (!confirm('Hapus layanan ini? Ini dapat memengaruhi pesanan yang terkait jika belum selesai.')) return;
+    try {
+        const res = await fetch(`/api/admin/services/${id}`, { method: 'DELETE' });
+        const d = await res.json();
+        d.success ? showToast(d.message) : showToast(d.message, true);
+        loadServices();
+    } catch { showToast('Gagal menghapus.', true); }
+}
+
+// ── Users (Admin & Technicians) ──────────────────────────
+async function loadUsers() {
+    try {
+        const res = await fetch('/api/admin/users');
+        const d = await res.json();
+        const tbody = document.getElementById('techsTableBody');
+        if (!d.success || d.data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-10 text-center text-slate-400">Belum ada pengguna.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = d.data.map(u => `
+            <tr class="hover:bg-slate-50/50 transition-colors">
+                <td class="px-3 py-3.5">
+                    <input type="text" id="uname-${u.id}" value="${u.name}" placeholder="Nama"
+                        class="w-full h-8 rounded-lg border border-slate-200 bg-slate-50 px-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </td>
+                <td class="px-3 py-3.5">
+                    <input type="text" id="uusername-${u.id}" value="${u.username}" placeholder="Username"
+                        class="w-full h-8 rounded-lg border border-slate-200 bg-slate-50 px-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </td>
+                <td class="px-3 py-3.5">
+                    <input type="password" id="upassword-${u.id}" placeholder="*** (Kosongkan jk tdk diubah)"
+                        class="w-full h-8 rounded-lg border border-slate-200 bg-slate-50 px-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </td>
+                <td class="px-3 py-3.5">
+                    <input type="text" id="uphone-${u.id}" value="${u.phone_number || ''}" placeholder="No. WA"
+                        class="w-full h-8 rounded-lg border border-slate-200 bg-slate-50 px-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </td>
+                <td class="px-3 py-3.5">
+                    <select id="urole-${u.id}" class="w-full h-8 rounded-lg border border-slate-200 bg-slate-50 px-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="technician" ${u.role === 'technician' ? 'selected' : ''}>Tukang</option>
+                        <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
+                    </select>
+                </td>
+                <td class="px-3 py-3.5">
+                    <select id="uactive-${u.id}" class="w-full h-8 rounded-lg border border-slate-200 bg-slate-50 px-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="1" ${u.is_active ? 'selected' : ''}>Aktif</option>
+                        <option value="0" ${!u.is_active ? 'selected' : ''}>Nonaktif</option>
+                    </select>
+                </td>
+                <td class="px-3 py-3.5 text-right">
+                    <div class="flex items-center justify-end gap-1">
+                        <button onclick="saveUser(${u.id})"
+                            class="flex items-center justify-center w-7 h-7 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-sm" title="Simpan Perubahan">
+                            <i data-lucide="save" class="w-3.5 h-3.5 text-brand-600"></i>
+                        </button>
+                        <button onclick="deleteUser(${u.id})"
+                            title="Hapus Pengguna"
+                            class="flex items-center justify-center w-7 h-7 rounded-lg border border-slate-200 text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors shadow-sm">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join('');
+        lucide.createIcons();
+    } catch (e) {}
+}
+
+async function saveUser(id) {
+    const name = document.getElementById(`uname-${id}`).value;
+    const username = document.getElementById(`uusername-${id}`).value;
+    const password = document.getElementById(`upassword-${id}`).value;
+    const phone = document.getElementById(`uphone-${id}`).value;
+    const role = document.getElementById(`urole-${id}`).value;
+    const active = document.getElementById(`uactive-${id}`).value;
+    try {
+        const res = await fetch(`/api/admin/users/${id}`, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, username, password, phone_number: phone, role, is_active: active })
+        });
+        const d = await res.json();
+        d.success ? showToast(d.message) : showToast(d.message, true);
+        if (d.success && password) document.getElementById(`upassword-${id}`).value = '';
+    } catch { showToast('Gagal menyimpan.', true); }
+}
+
+function openAddUser() {
+    document.getElementById('techName').value = '';
+    document.getElementById('techWa').value = '';
+    document.getElementById('techUsername').value = '';
+    document.getElementById('techPassword').value = '';
+    document.getElementById('techRole').value = 'technician';
+    document.getElementById('techModal').classList.replace('hidden', 'flex');
+}
+function closeAddUser() { document.getElementById('techModal').classList.replace('flex', 'hidden'); }
+
+async function addUser() {
+    const name = document.getElementById('techName').value;
+    const phone = document.getElementById('techWa').value;
+    const username = document.getElementById('techUsername').value;
+    const password = document.getElementById('techPassword').value;
+    const role = document.getElementById('techRole').value;
+    
+    if (!name || !username || !password) { showToast('Nama, username, dan password wajib diisi.', true); return; }
+    
+    try {
+        const res = await fetch('/api/admin/users', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, phone_number: phone, username, password, role })
+        });
+        const d = await res.json();
+        if (d.success) { closeAddUser(); showToast(d.message); loadUsers(); }
+        else showToast(d.message, true);
+    } catch { showToast('Gagal menambahkan.', true); }
+}
+
+async function deleteUser(id) {
+    if (!confirm('Hapus pengguna ini secara permanen?')) return;
+    try {
+        const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+        const d = await res.json();
+        d.success ? showToast(d.message) : showToast(d.message, true);
+        loadUsers();
+    } catch { showToast('Gagal menghapus.', true); }
+}
+
+// ── Gallery ─────────────────────────────────
+async function loadGallery() {
+    const grid = document.getElementById('galleryGrid');
+    try {
+        const r = await fetch('/api/gallery');
+        const d = await r.json();
+        if (!d.success||!d.data.length) { grid.innerHTML='<p class="col-span-full text-sm text-slate-400 text-center py-8">Belum ada foto.</p>'; return; }
+        grid.innerHTML = d.data.map(img=>`
+            <div class="group relative rounded-xl overflow-hidden border border-slate-200 bg-slate-100 aspect-video shadow-sm">
+                <img src="${img.image_url}" alt="${img.title}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    onerror="this.src='https://placehold.co/400x225/dbeafe/2563eb?text=Foto'">
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                    <p class="text-white text-xs font-semibold px-3 text-center">${img.title}</p>
+                    <button onclick="deleteGallery(${img.id})" class="flex items-center gap-1 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-1.5 transition-colors">
+                        <i data-lucide="trash-2" class="w-3 h-3"></i> Hapus
+                    </button>
+                </div>
+            </div>`).join('');
+        lucide.createIcons();
+    } catch(e){}
+}
+
+async function openAddGallery() {
+    document.getElementById('galleryFile').value='';
+    document.getElementById('galleryTitle').value='';
+    document.getElementById('galleryPreview').classList.add('hidden');
+    
+    // Load categories from settings
+    const catSelect = document.getElementById('galleryCategory');
+    catSelect.innerHTML = '<option value="Umum">Umum</option>';
+    try {
+        const r = await fetch('/api/settings');
+        const d = await r.json();
+        if (d.success && d.data.gallery_categories) {
+            const cats = d.data.gallery_categories.split(',').map(s => s.trim()).filter(Boolean);
+            catSelect.innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
+            if (!cats.includes('Umum')) catSelect.innerHTML += '<option value="Umum">Umum</option>';
+        }
+    } catch(e){}
+
+    document.getElementById('galleryModal').classList.replace('hidden','flex');
+}
+function closeAddGallery() { document.getElementById('galleryModal').classList.replace('flex','hidden'); }
+
+document.addEventListener('DOMContentLoaded', ()=>{
+    document.getElementById('galleryFile').addEventListener('change', function(){
+        const prev = document.getElementById('galleryPreview');
+        const img  = document.getElementById('galleryPreviewImg');
+        if (this.files && this.files[0]) { 
+            img.src = URL.createObjectURL(this.files[0]); 
+            prev.classList.remove('hidden'); 
+        }
+        else prev.classList.add('hidden');
+    });
+});
+
+async function addGallery() {
+    const file   = document.getElementById('galleryFile').files[0];
+    const title = document.getElementById('galleryTitle').value;
+    const category = document.getElementById('galleryCategory').value;
+    if (!file || !title) { showToast('File foto dan judul harus diisi.', true); return; }
+    
+    const formData = new FormData();
+    formData.append('photo', file);
+    formData.append('title', title);
+    formData.append('category', category);
+
+    try {
+        const res = await fetch('/api/admin/gallery/upload', { method: 'POST', body: formData });
+        const d = await res.json();
+        if (d.success) { closeAddGallery(); showToast(d.message); loadGallery(); }
+        else showToast(d.message, true);
+    } catch { showToast('Gagal menambahkan.', true); }
+}
+
+async function deleteGallery(id) {
+    if (!confirm('Hapus foto ini dari galeri landing page?')) return;
+    try {
+        const res = await fetch(`/api/admin/gallery/${id}`,{method:'DELETE'});
+        const d = await res.json();
+        d.success ? showToast(d.message) : showToast(d.message,true);
+        loadGallery();
+    } catch { showToast('Gagal menghapus.',true); }
+}
+
+// ── Items (Rincian Biaya) ───────────────────
+let _currentItems = [];
+let _currentItemsOrderId = null;
+
+async function openItemsModal(id) {
+    _currentItemsOrderId = id;
+    document.getElementById('itemsModalJobId').textContent = 'Memuat...';
+    document.getElementById('itemsTableBody').innerHTML = '<tr><td colspan="5" class="text-center py-4 text-slate-400">Loading...</td></tr>';
+    document.getElementById('itemsTotalVal').textContent = 'Rp 0';
+    document.getElementById('itemsModal').classList.replace('hidden', 'flex');
+    try {
+        const r = await fetch(`/api/admin/orders/${id}`);
+        const d = await r.json();
+        if (d.success) {
+            document.getElementById('itemsModalJobId').textContent = d.data.order.job_id;
+            
+            document.getElementById('itemsDp').value = d.data.order.dp_amount || 0;
+            document.getElementById('itemsExpense').value = d.data.order.expense_amount || 0;
+            
+            const it = d.data.order.items;
+            _currentItems = it ? JSON.parse(it) : [];
+            if (_currentItems.length === 0) {
+                // default 1 row
+                _currentItems.push({ desc: d.data.order.service_type, qty: 1, price: d.data.service ? d.data.service.starting_price : 0 });
+            }
+            renderItemsRows();
+        }
+    } catch (e) {}
+}
+
+function closeItemsModal() { document.getElementById('itemsModal').classList.replace('flex', 'hidden'); }
+
+function renderItemsRows() {
+    const tbody = document.getElementById('itemsTableBody');
+    let total = 0;
+    tbody.innerHTML = _currentItems.map((it, idx) => {
+        const sub = Number(it.qty) * Number(it.price);
+        total += sub;
+        return `
+        <tr>
+            <td class="px-2 py-2"><input type="text" value="${it.desc}" onchange="_currentItems[${idx}].desc=this.value" class="w-full h-8 px-2 border border-slate-200 rounded text-xs focus:ring-1 focus:ring-brand-500 outline-none"></td>
+            <td class="px-2 py-2"><input type="number" value="${it.qty}" min="1" onchange="_currentItems[${idx}].qty=Number(this.value); renderItemsRows()" class="w-full h-8 px-2 border border-slate-200 rounded text-xs text-right focus:ring-1 focus:ring-brand-500 outline-none"></td>
+            <td class="px-2 py-2"><input type="number" value="${it.price}" min="0" onchange="_currentItems[${idx}].price=Number(this.value); renderItemsRows()" class="w-full h-8 px-2 border border-slate-200 rounded text-xs text-right focus:ring-1 focus:ring-brand-500 outline-none"></td>
+            <td class="px-2 py-2 text-right text-xs font-semibold text-slate-700 whitespace-nowrap">${fmtRp(sub)}</td>
+            <td class="px-2 py-2 text-right"><button onclick="_currentItems.splice(${idx},1); renderItemsRows()" class="text-slate-400 hover:text-red-500 p-1 rounded transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+        </tr>`;
+    }).join('');
+    if (_currentItems.length === 0) tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-xs text-slate-400">Belum ada rincian.</td></tr>';
+    document.getElementById('itemsTotalVal').textContent = fmtRp(total);
+    lucide.createIcons();
+}
+
+function addItemRow() {
+    _currentItems.push({ desc: '', qty: 1, price: 0 });
+    renderItemsRows();
+}
+
+async function saveItems() {
+    try {
+        const dp_amount = document.getElementById('itemsDp').value || 0;
+        const expense_amount = document.getElementById('itemsExpense').value || 0;
+        
+        const r = await fetch(`/api/admin/orders/${_currentItemsOrderId}/items`, {
+            method: 'PUT', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ 
+                items: _currentItems,
+                dp_amount: Number(dp_amount),
+                expense_amount: Number(expense_amount)
+            })
+        });
+        const d = await r.json();
+        d.success ? showToast(d.message) : showToast(d.message, true);
+        if (d.success) { closeItemsModal(); loadOrders(); }
+    } catch(e) { showToast('Gagal menyimpan rincian.', true); }
+}
+
+// ── Print ────────────────────────────────────
+let _printData = null;
+async function openPrintModal(id) {
+    try {
+        const r = await fetch(`/api/admin/orders/${id}`);
+        const d = await r.json();
+        if (!d.success) { showToast('Gagal memuat detail order.',true); return; }
+        _printData = d.data;
+        renderDoc('workorder');
+        document.getElementById('printModal').classList.replace('hidden','flex');
+    } catch { showToast('Gagal.',true); }
+}
+function closePrintModal() { document.getElementById('printModal').classList.replace('flex','hidden'); }
+
+function renderDoc(type) {
+    if (!_printData) return;
+    const { order, technician, service } = _printData;
+    const sc = STATUS_CFG[order.current_status]||STATUS_CFG.pending;
+
+    const cName = document.getElementById('set_company_name').value || 'TukangSiaga';
+    const cPhone = document.getElementById('set_company_phone').value || '0812-3456-7890';
+    const cEmail = document.getElementById('set_company_email').value || 'hello@tukangsiaga.com';
+    const cBank = document.getElementById('set_company_bank').value || 'Belum diatur';
+
+    const cAddress = document.getElementById('set_company_address').value || 'Jakarta';
+    const logoImg = document.getElementById('currentLogo');
+    const hasLogo = !logoImg.classList.contains('hidden');
+    const cLogoUrl = hasLogo ? logoImg.src : '';
+
+    const price = order.final_price || (service?service.starting_price:0);
+    const priceStr = price>0 ? fmtRp(price) : 'Menunggu survei';
+
+    let itemsHtml = '';
+    try {
+        const items = order.items ? JSON.parse(order.items) : [];
+        if (items.length > 0) {
+            itemsHtml = items.map(it => `
+                <tr class="${type==='invoice'?'':'border-b border-slate-100'}">
+                    <td class="py-2 text-slate-800">${it.desc}</td>
+                    <td class="py-2 text-center text-slate-600">${it.qty}</td>
+                    <td class="py-2 text-right text-slate-600">${fmtRp(it.price)}</td>
+                    <td class="py-2 text-right font-semibold text-slate-900">${fmtRp(it.qty * it.price)}</td>
+                </tr>
+            `).join('');
+        }
+    } catch(e) {}
+    if (!itemsHtml) {
+        itemsHtml = `<tr class="${type==='invoice'?'':'border-b border-slate-100'}"><td class="py-2 text-slate-800">${order.service_type}</td><td class="py-2 text-center text-slate-600">1</td><td class="py-2 text-right text-slate-600">${priceStr}</td><td class="py-2 text-right font-semibold text-slate-900">${priceStr}</td></tr>`;
+    }
+
+    let html = '';
+    if (type === 'invoice') {
+        html = `
+            <div class="font-mono text-sm text-black p-8 bg-white border border-slate-200 rounded-xl" style="width: 100%;">
+                <div class="text-center mb-6">
+                    ${hasLogo ? `<img src="${cLogoUrl}" class="h-16 mx-auto mb-3 object-contain" style="max-width: 200px;">` : ''}
+                    <h2 class="text-2xl font-bold uppercase">${cName}</h2>
+                    <p class="text-sm mt-1">${cAddress}</p>
+                    <p class="text-sm">${cPhone} &bull; ${cEmail}</p>
+                    <p class="mt-4 font-bold border-y border-dashed border-black py-2 uppercase tracking-widest text-lg">I N V O I C E</p>
+                </div>
+                <div class="mb-6 text-sm flex justify-between">
+                    <div>
+                        <p>TRX ID    : ${order.job_id}</p>
+                        <p>TGL CETAK : ${fmtDate(new Date())}</p>
+                    </div>
+                    <div class="text-right">
+                        <p>PELANGGAN : ${order.customer_name}</p>
+                        <p>${order.customer_whatsapp}</p>
+                    </div>
+                </div>
+                <table class="w-full text-sm mb-6">
+                    <thead>
+                        <tr class="border-y border-dashed border-black text-left">
+                            <th class="py-2">URAIAN PEKERJAAN / MATERIAL</th>
+                            <th class="py-2 text-center w-24">QTY</th>
+                            <th class="py-2 text-right w-40">HARGA SATUAN</th>
+                            <th class="py-2 text-right w-40">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody class="border-b border-dashed border-black">
+                        ${itemsHtml}
+                    </tbody>
+                </table>
+                <div class="mb-8">
+                    <div class="flex justify-between font-bold text-sm">
+                        <span>TOTAL KESELURUHAN</span>
+                        <span>${priceStr}</span>
+                    </div>
+                    ${order.dp_amount > 0 ? `
+                    <div class="flex justify-between text-sm py-1">
+                        <span>UANG MUKA (DP)</span>
+                        <span>- ${fmtRp(order.dp_amount)}</span>
+                    </div>` : ''}
+                    <div class="flex justify-between font-bold text-base mt-2 border-b border-dashed border-black pb-2">
+                        <span>${order.dp_amount > 0 ? 'SISA TAGIHAN' : 'TOTAL TAGIHAN'}</span>
+                        <span>${fmtRp((order.final_price || 0) - (order.dp_amount || 0))}</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-8 text-sm">
+                    <div class="border border-dashed border-black p-4 rounded">
+                        <p class="font-bold mb-2">PEMBAYARAN TRANSFER:</p>
+                        <p>${cBank}</p>
+                    </div>
+                    <div class="text-right flex flex-col justify-end">
+                        <p class="mb-12">Hormat Kami,</p>
+                        <p class="font-bold">(${cName})</p>
+                    </div>
+                </div>
+                <div class="text-center text-xs mt-8 pt-4 border-t border-dashed border-slate-300 opacity-60">
+                    Dicetak oleh Sistem - tukangsiaga.com
+                </div>
+            </div>`;
+    } else {
+        const docTitle = type === 'sph' ? 'SURAT PENAWARAN HARGA (SPH)' : 'SURAT PERINTAH KERJA (SPK)';
+        const totalLabel = type === 'sph' ? 'Total Penawaran' : 'Total Estimasi';
+        
+        let tfootHtml = `<tr><td colspan="3" class="pt-4 font-bold text-slate-900 text-base text-right pr-4">${totalLabel}</td><td class="pt-4 text-right text-lg font-extrabold text-slate-900">${priceStr}</td></tr>`;
+        
+        if (order.dp_amount > 0) {
+            tfootHtml += `
+            <tr>
+                <td colspan="3" class="pt-2 font-bold text-slate-500 text-sm text-right pr-4">Uang Muka (DP)</td>
+                <td class="pt-2 text-right text-sm font-bold text-slate-600">- ${fmtRp(order.dp_amount)}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="pt-2 font-extrabold text-slate-900 text-base text-right pr-4">Sisa Tagihan</td>
+                <td class="pt-2 text-right text-lg font-extrabold text-brand-700">${fmtRp((order.final_price || 0) - (order.dp_amount || 0))}</td>
+            </tr>`;
+        }
+        
+        html = `
+            <div class="border border-slate-200 rounded-xl p-8 bg-white">
+                <div class="flex justify-between items-start pb-6 mb-6 border-b border-slate-200">
+                    <div class="flex items-center gap-4">
+                        ${hasLogo ? `<img src="${cLogoUrl}" class="h-16 object-contain" style="max-width: 150px;">` : `<div class="h-10 w-10 rounded-lg bg-brand-600 flex items-center justify-center text-white text-sm"><i data-lucide="hammer" class="w-5 h-5"></i></div>`}
+                        <div>
+                            <div class="font-extrabold text-xl text-slate-900 uppercase tracking-wide">${cName}</div>
+                            <p class="text-xs text-slate-500 mt-1">${cAddress}</p>
+                            <p class="text-xs text-slate-500">${cEmail} &bull; ${cPhone}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs font-bold uppercase tracking-widest text-slate-400">${docTitle}</p>
+                        <p class="text-2xl font-extrabold text-slate-900 font-mono mt-1">${order.job_id}</p>
+                        <p class="text-xs text-slate-400 mt-1">${fmtDateLong(order.created_at)}</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-8 mb-6 text-sm">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Pelanggan</p>
+                        <p class="font-bold text-slate-900">${order.customer_name}</p>
+                        <p class="text-slate-500">${order.customer_whatsapp}</p>
+                        <p class="text-slate-500 mt-1 text-xs leading-relaxed">${order.customer_address}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Pekerjaan</p>
+                        <p class="font-bold text-slate-900">${order.service_type}</p>
+                        <p class="text-slate-500">Teknisi: ${technician?technician.name:'Belum ditugaskan'}</p>
+                        <p class="mt-1"><span class="inline-block px-2 py-0.5 rounded-full border text-xs font-bold ${sc.cls}">${sc.label}</span></p>
+                    </div>
+                </div>
+                <div class="bg-slate-50 rounded-xl p-4 mb-6 text-sm">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Deskripsi Masalah</p>
+                    <p class="text-slate-700 leading-relaxed">${order.problem_description}</p>
+                </div>
+                <table class="w-full text-sm mb-6">
+                    <thead><tr class="border-b border-slate-200"><th class="text-left py-2.5 text-xs font-bold uppercase tracking-wider text-slate-400">Uraian Pekerjaan / Material</th><th class="text-center py-2.5 text-xs font-bold uppercase tracking-wider text-slate-400 w-16">Qty</th><th class="text-right py-2.5 text-xs font-bold uppercase tracking-wider text-slate-400 w-32">Harga</th><th class="text-right py-2.5 text-xs font-bold uppercase tracking-wider text-slate-400 w-32">Subtotal</th></tr></thead>
+                    <tbody>${itemsHtml}</tbody>
+                    <tfoot>${tfootHtml}</tfoot>
+                </table>
+                <div class="mt-6 pt-4 border-t border-slate-100 text-center text-xs text-slate-400">
+                    Dokumen ini diterbitkan otomatis oleh sistem ${cName} &bull; tukangsiaga.com
+                </div>
+            </div>`;
+    }
+    
+    document.getElementById('docPreview').innerHTML = html;
+    document.getElementById('printOnly').innerHTML = html;
+    
+    document.querySelectorAll('.print-tab-btn').forEach(b => {
+        b.classList.remove('bg-white', 'shadow-sm', 'text-slate-900');
+        b.classList.add('text-slate-600');
+    });
+    const activeBtn = document.getElementById('btnTab-' + type);
+    if (activeBtn) {
+        activeBtn.classList.remove('text-slate-600');
+        activeBtn.classList.add('bg-white', 'shadow-sm', 'text-slate-900');
+    }
+    
+    lucide.createIcons();
+}
+
+// ── Settings ─────────────────────────────────
+async function loadSettings() {
+    try {
+        const r = await fetch('/api/settings');
+        const d = await r.json();
+        if (d.success) {
+            const s = d.data;
+            document.getElementById('set_company_name').value = s.company_name || '';
+            document.getElementById('set_company_email').value = s.company_email || '';
+            document.getElementById('set_company_phone').value = s.company_phone || '';
+            document.getElementById('set_company_address').value = s.company_address || '';
+            document.getElementById('set_company_coverage').value = s.company_coverage || '';
+            document.getElementById('set_company_bank').value = s.company_bank || '';
+            document.getElementById('set_gallery_categories').value = s.gallery_categories || 'Umum';
+            
+            if (s.company_logo) {
+                const img = document.getElementById('currentLogo');
+                img.src = s.company_logo;
+                img.classList.remove('hidden');
+                document.getElementById('noLogoIcon').classList.add('hidden');
+            }
+        }
+    } catch(e) {}
+}
+
+async function saveSettings() {
+    const btn = document.getElementById('btnSaveSettings');
+    const icon = document.getElementById('iconSaveSettings');
+    const text = document.getElementById('textSaveSettings');
+    
+    icon.setAttribute('data-lucide', 'loader-2');
+    icon.classList.add('animate-spin');
+    text.textContent = 'Menyimpan...';
+    lucide.createIcons();
+    btn.disabled = true;
+    
+    const settings = {
+        company_name: document.getElementById('set_company_name').value,
+        company_email: document.getElementById('set_company_email').value,
+        company_phone: document.getElementById('set_company_phone').value,
+        company_address: document.getElementById('set_company_address').value,
+        company_coverage: document.getElementById('set_company_coverage').value,
+        company_bank: document.getElementById('set_company_bank').value,
+        gallery_categories: document.getElementById('set_gallery_categories').value,
+    };
+
+    try {
+        const res = await fetch('/api/admin/settings', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(settings)
+        });
+        const d = await res.json();
+        d.success ? showToast(d.message) : showToast(d.message, true);
+    } catch {
+        showToast('Gagal menyimpan pengaturan.', true);
+    } finally {
+        icon.setAttribute('data-lucide', 'save');
+        icon.classList.remove('animate-spin');
+        text.textContent = 'Simpan Pengaturan';
+        lucide.createIcons();
+        btn.disabled = false;
+    }
+}
+
+async function uploadLogo() {
+    const input = document.getElementById('logoInput');
+    const file = input.files[0];
+    if (!file) { showToast('Pilih file logo terlebih dahulu.', true); return; }
+    
+    const btn = document.getElementById('btnUploadLogo');
+    const icon = document.getElementById('iconUploadLogo');
+    const text = document.getElementById('textUploadLogo');
+    
+    icon.classList.remove('hidden');
+    text.textContent = 'Upload...';
+    btn.disabled = true;
+
+    const fd = new FormData();
+    fd.append('logo', file);
+
+    try {
+        const res = await fetch('/api/admin/settings/logo', { method: 'POST', body: fd });
+        const d = await res.json();
+        if (d.success) {
+            showToast(d.message);
+            const img = document.getElementById('currentLogo');
+            img.src = d.logoUrl + '?t=' + Date.now();
+            img.classList.remove('hidden');
+            document.getElementById('noLogoIcon').classList.add('hidden');
+            input.value = '';
+        } else {
+            showToast(d.message, true);
+        }
+    } catch {
+        showToast('Gagal mengupload logo.', true);
+    } finally {
+        icon.classList.add('hidden');
+        text.textContent = 'Upload';
+        btn.disabled = false;
+    }
+}
+
+async function restoreSystem() {
+    const input = document.getElementById('restoreInput');
+    const file = input.files[0];
+    if (!file) return;
+
+    if (!confirm('PERINGATAN: Memulihkan backup akan MENIMPA semua data dan pengaturan saat ini. Lanjutkan?')) {
+        input.value = '';
+        return;
+    }
+
+    showToast('Sedang memulihkan data, mohon tunggu...');
+    const fd = new FormData();
+    fd.append('backup_file', file);
+
+    try {
+        const res = await fetch('/api/admin/restore', { method: 'POST', body: fd });
+        const d = await res.json();
+        if (d.success) {
+            showToast(d.message);
+            setTimeout(() => window.location.reload(), 2000); // Reload after restart
+        } else {
+            showToast(d.message, true);
+        }
+    } catch {
+        showToast('Gagal merestore sistem.', true);
+    }
+    input.value = '';
+}
+
+async function updateSystem() {
+    if (!confirm('Tarik pembaruan dari Git? Server akan di-restart otomatis jika berhasil.')) return;
+
+    showToast('Menarik pembaruan dari Git...');
+    try {
+        const res = await fetch('/api/admin/update', { method: 'POST' });
+        const d = await res.json();
+        if (d.success) {
+            showToast(d.message);
+            console.log(d.log);
+            setTimeout(() => window.location.reload(), 2000);
+        } else {
+            showToast(d.message, true);
+        }
+    } catch {
+        showToast('Gagal memperbarui sistem.', true);
+    }
+}
+
+// ── Init ─────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => { 
+    lucide.createIcons();
+    loadStats(); 
+    loadOrders(); 
+    loadSettings(); 
+    
+    // Auto-refresh orders every 10 seconds
+    setInterval(() => {
+        const activeTab = document.querySelector('.tab-panel:not(.hidden)');
+        if (activeTab && activeTab.id === 'tab-orders') {
+            // We shouldn't clear the table innerHTML here to prevent flickering
+            fetch('/api/admin/orders').then(r=>r.json()).then(d=>{
+                if(d.success) {
+                    const filter = document.getElementById('filterStatus').value;
+                    const orders = filter ? d.data.filter(o=>o.current_status===filter) : d.data;
+                    const tbody  = document.getElementById('ordersTableBody');
+                    if (!orders.length) {
+                        tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-10 text-center text-slate-400">Tidak ada pesanan.</td></tr>`;
+                        return;
+                    }
+                    tbody.innerHTML = orders.map(o=>`
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-4 py-3.5">
+                                <p class="font-mono font-bold text-xs text-brand-700">${o.job_id}</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5">${fmtDate(o.created_at)}</p>
+                            </td>
+                            <td class="px-4 py-3.5">
+                                <p class="font-semibold text-sm text-slate-900">${o.customer_name}</p>
+                                <p class="text-[11px] text-slate-400">${o.customer_whatsapp}</p>
+                            </td>
+                            <td class="px-4 py-3.5 text-sm text-slate-600">${o.service_type}</td>
+                            <td class="px-4 py-3.5">${badge(o.current_status)}</td>
+                            <td class="px-4 py-3.5 text-sm text-slate-600">${o.technician_name||'<span class="text-slate-300 italic text-xs">Belum</span>'}</td>
+                            <td class="px-4 py-3.5 text-right">
+                                <div class="flex items-center justify-end gap-1.5">
+                                    <a href="/progress.html?id=${o.job_id}" target="_blank"
+                                        title="Lihat Progres"
+                                        class="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-brand-600 transition-colors">
+                                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                                    </a>
+                                    <button onclick="openItemsModal(${o.id})"
+                                        title="Rincian Biaya & Material"
+                                        class="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-brand-600 transition-colors">
+                                        <i data-lucide="list-todo" class="w-4 h-4"></i>
+                                    </button>
+                                    <button onclick="openPrintModal(${o.id})"
+                                        title="Cetak Surat"
+                                        class="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-brand-600 transition-colors">
+                                        <i data-lucide="printer" class="w-4 h-4"></i>
+                                    </button>
+                                    <button onclick="deleteOrder(${o.id})"
+                                        title="Hapus Pesanan"
+                                        class="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                    <button onclick="openStatusModal(${o.id},'${o.current_status}','${o.job_id}',${o.technician_id||'null'})"
+                                        class="h-8 px-3 flex items-center justify-center rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-colors">
+                                        Update
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`).join('');
+                    lucide.createIcons();
+                }
+            }).catch(e=>{});
+            loadStats();
+        }
+    }, 10000);
+});
+</script>
+</body>
+</html>
