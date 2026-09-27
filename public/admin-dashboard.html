@@ -316,7 +316,12 @@
         <div id="tab-finance" class="tab-panel hidden space-y-4">
             <div class="flex items-center justify-between">
                 <h2 class="text-base font-bold text-slate-900">Laporan Keuangan</h2>
-                <input type="month" id="financeMonth" onchange="loadFinance()" class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <div class="flex items-center gap-3">
+                    <input type="month" id="financeMonth" onchange="loadFinance()" class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    <button onclick="printFinanceReport()" class="flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-colors">
+                        <i data-lucide="printer" class="w-4 h-4"></i> Cetak Laporan
+                    </button>
+                </div>
             </div>
             
             <div id="financeSummaryRow" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
@@ -732,6 +737,82 @@ async function loadFinance() {
         `;
         lucide.createIcons();
     } catch(e) {}
+}
+
+async function printFinanceReport() {
+    try {
+        const r = await fetch('/api/settings');
+        const s = await r.json();
+        const cName = s.data?.company_name || 'Tukang Siaga';
+        const logo = s.data?.company_logo ? `<img src="${s.data.company_logo}" class="h-12 w-auto object-contain">` : `<div class="h-10 w-10 bg-slate-900 rounded-xl flex items-center justify-center text-white"><i data-lucide="wallet" class="w-5 h-5"></i></div>`;
+        const cAddr = s.data?.company_address || '';
+        
+        let dateFilter = document.getElementById('financeMonth').value;
+        if (dateFilter) {
+            const [y, m] = dateFilter.split('-');
+            const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+            dateFilter = `${months[parseInt(m)-1]} ${y}`;
+        } else {
+            dateFilter = 'Semua Waktu';
+        }
+        
+        const tbody = document.getElementById('financeTableBody').innerHTML;
+        const tfoot = document.getElementById('financeTableFoot').innerHTML;
+        
+        const html = `
+            <div class="max-w-4xl mx-auto p-12 bg-white">
+                <div class="flex justify-between items-start mb-8 pb-6 border-b border-slate-200">
+                    <div class="flex items-center gap-4">
+                        ${logo}
+                        <div>
+                            <h1 class="text-2xl font-black text-slate-900 tracking-tight">${cName}</h1>
+                            <p class="text-xs text-slate-500 mt-1 max-w-sm leading-relaxed">${cAddr.replace(/\n/g, '<br>')}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <h2 class="text-xl font-black text-slate-900">Laporan Keuangan</h2>
+                        <p class="text-sm font-semibold text-slate-500 mt-1">Periode: ${dateFilter}</p>
+                    </div>
+                </div>
+                
+                <table class="w-full text-sm mb-8">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200">
+                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Tgl / Job ID</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Pelanggan</th>
+                            <th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Pendapatan</th>
+                            <th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">HPP (Modal)</th>
+                            <th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Laba Bersih</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        ${tbody}
+                    </tbody>
+                    <tfoot class="bg-slate-50 border-t-2 border-slate-200 font-bold">
+                        ${tfoot}
+                    </tfoot>
+                </table>
+                
+                <div class="mt-12 pt-8 border-t border-slate-200 flex justify-between items-end">
+                    <div class="text-xs text-slate-400">
+                        <p>Dicetak pada: ${new Date().toLocaleString('id-ID')}</p>
+                        <p class="mt-1">Dokumen ini dihasilkan oleh sistem ${cName}.</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-sm font-bold text-slate-900 mb-16">Mengetahui,</p>
+                        <p class="text-sm font-bold text-slate-900 border-t border-slate-900 pt-1 inline-block min-w-[150px]">( ................................ )</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('printOnly').innerHTML = html;
+        lucide.createIcons();
+        setTimeout(() => window.print(), 100);
+    } catch(e) {
+        console.error(e);
+        showToast('Gagal mencetak laporan', true);
+    }
 }
 
 // ── Stats ───────────────────────────────────
