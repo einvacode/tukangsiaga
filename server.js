@@ -251,6 +251,25 @@ app.get('/api/gallery', async (req, res) => {
     }
 });
 
+// GET public stats for landing page
+app.get('/api/public-stats', async (req, res) => {
+    try {
+        const completed = await pool.get("SELECT COUNT(*) as c FROM orders WHERE current_status = 'completed'");
+        const techs = await pool.get("SELECT COUNT(*) as c FROM users WHERE role = 'technician'");
+        res.json({
+            success: true,
+            data: {
+                projects_completed: completed.c,
+                technicians_count: techs.c,
+                satisfaction_rate: '98%',
+                response_time: '< 3 Jam'
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 // ============================================================
 // ADMIN API - ORDERS MANAGEMENT
 // ============================================================
