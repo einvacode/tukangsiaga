@@ -55,6 +55,9 @@
             <button onclick="switchTab('settings')" data-tab="settings" class="tab-btn flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-semibold rounded-lg transition-colors">
                 <i data-lucide="settings" class="w-4 h-4"></i> Pengaturan
             </button>
+            <button onclick="switchTab('finance')" data-tab="finance" class="tab-btn flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-semibold rounded-lg transition-colors">
+                <i data-lucide="wallet" class="w-4 h-4"></i> Keuangan
+            </button>
         </nav>
 
         <div class="ml-auto flex items-center gap-4">
@@ -305,6 +308,38 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ===== TAB: FINANCE ===== -->
+        <div id="tab-finance" class="tab-panel hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-base font-bold text-slate-900">Laporan Keuangan</h2>
+                <input type="month" id="financeMonth" onchange="loadFinance()" class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            
+            <div id="financeSummaryRow" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                <!-- populated by JS -->
+            </div>
+
+            <div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100">
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Tgl / Job ID</th>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase">Pelanggan</th>
+                                <th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase">Pendapatan</th>
+                                <th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase">HPP (Modal)</th>
+                                <th class="px-4 py-3 text-right text-xs font-bold text-slate-500 uppercase">Laba Bersih</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financeTableBody" class="divide-y divide-slate-100">
+                        </tbody>
+                        <tfoot id="financeTableFoot" class="bg-slate-50 border-t border-slate-200 font-bold">
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>
@@ -628,8 +663,76 @@ function switchTab(name) {
     if (name==='services') loadServices();
     if (name==='gallery')  loadGallery();
     if (name==='techs')    loadTechs();
+    if (name==='finance')  loadFinance();
 }
 switchTab('orders');
+
+// ── Finance ─────────────────────────────────
+async function loadFinance() {
+    const tbody = document.getElementById('financeTableBody');
+    const tfoot = document.getElementById('financeTableFoot');
+    tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-10 text-center text-slate-400">Memuat data keuangan...</td></tr>`;
+    try {
+        const res = await fetch('/api/admin/orders');
+        const d = await res.json();
+        if(!d.success) return;
+        
+        // Filter by completed status for finalized financial reporting
+        let orders = d.data.filter(o => o.current_status === 'completed');
+        
+        const monthFilter = document.getElementById('financeMonth').value;
+        if(monthFilter) {
+            orders = orders.filter(o => o.created_at.startsWith(monthFilter));
+        }
+
+        let totalInc = 0, totalExp = 0;
+        
+        const html = orders.map(o => {
+            const inc = Number(o.final_price || 0);
+            const exp = Number(o.expense_amount || 0);
+            const laba = inc - exp;
+            totalInc += inc;
+            totalExp += exp;
+            
+            return `
+            <tr class="hover:bg-slate-50 transition-colors">
+                <td class="px-4 py-3"><div class="font-mono text-xs font-bold text-slate-800">${o.job_id}</div><div class="text-slate-400 text-[10px] mt-0.5">${fmtDate(o.created_at)}</div></td>
+                <td class="px-4 py-3"><div class="font-medium text-slate-900 text-sm">${o.customer_name}</div><div class="text-slate-500 text-xs">${o.service_type}</div></td>
+                <td class="px-4 py-3 text-right text-emerald-600 font-semibold">${fmtRp(inc)}</td>
+                <td class="px-4 py-3 text-right text-rose-600 font-semibold">${fmtRp(exp)}</td>
+                <td class="px-4 py-3 text-right text-blue-600 font-bold">${fmtRp(laba)}</td>
+            </tr>
+            `;
+        }).join('');
+        
+        tbody.innerHTML = html || `<tr><td colspan="5" class="px-4 py-10 text-center text-slate-400 text-sm">Tidak ada data keuangan untuk periode ini.</td></tr>`;
+        
+        tfoot.innerHTML = `
+            <tr>
+                <td colspan="2" class="px-4 py-3.5 text-right font-bold uppercase tracking-wider text-[11px] text-slate-500">TOTAL PERIODE INI</td>
+                <td class="px-4 py-3.5 text-right font-extrabold text-emerald-700 text-sm">${fmtRp(totalInc)}</td>
+                <td class="px-4 py-3.5 text-right font-extrabold text-rose-700 text-sm">${fmtRp(totalExp)}</td>
+                <td class="px-4 py-3.5 text-right font-extrabold text-blue-700 text-base">${fmtRp(totalInc - totalExp)}</td>
+            </tr>
+        `;
+        
+        document.getElementById('financeSummaryRow').innerHTML = `
+            <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm flex items-center gap-4">
+                <div class="h-11 w-11 shrink-0 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600"><i data-lucide="wallet" class="w-6 h-6"></i></div>
+                <div><p class="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">Total Pendapatan</p><p class="text-xl font-extrabold text-emerald-900 mt-0.5">${fmtRp(totalInc)}</p></div>
+            </div>
+            <div class="rounded-xl border border-rose-200 bg-rose-50 p-5 shadow-sm flex items-center gap-4">
+                <div class="h-11 w-11 shrink-0 rounded-xl bg-rose-100 flex items-center justify-center text-rose-600"><i data-lucide="credit-card" class="w-6 h-6"></i></div>
+                <div><p class="text-[10px] font-bold text-rose-600 uppercase tracking-wide">Total HPP / Modal</p><p class="text-xl font-extrabold text-rose-900 mt-0.5">${fmtRp(totalExp)}</p></div>
+            </div>
+            <div class="rounded-xl border border-blue-200 bg-blue-50 p-5 shadow-sm flex items-center gap-4">
+                <div class="h-11 w-11 shrink-0 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600"><i data-lucide="trending-up" class="w-6 h-6"></i></div>
+                <div><p class="text-[10px] font-bold text-blue-600 uppercase tracking-wide">Laba Bersih</p><p class="text-2xl font-extrabold text-blue-900 mt-0.5">${fmtRp(totalInc - totalExp)}</p></div>
+            </div>
+        `;
+        lucide.createIcons();
+    } catch(e) {}
+}
 
 // ── Stats ───────────────────────────────────
 async function loadStats() {
