@@ -96,8 +96,8 @@ def convert_mysql_to_sqlite(filename):
         
         await pool.run(`INSERT INTO settings (setting_key, setting_value) VALUES
         ('company_name', 'Tukang Siaga'),
-        ('company_email', 'hello@tukangsiaga.com'),
-        ('company_phone', '0812-3456-7890'),
+        ('company_email', 'einvagroup@gmail.com'),
+        ('company_phone', '0822-9863-3300'),
         ('company_address', 'Jakarta Pusat'),
         ('company_coverage', 'Jakarta, Bogor, Depok, Tangerang, Bekasi'),
         ('gallery_categories', 'Umum, Saluran Air & Pipa, Plafon & Gypsum, Atap & Genteng Bocor, Instalasi Listrik, Cat Rumah'),
