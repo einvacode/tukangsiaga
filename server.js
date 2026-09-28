@@ -627,7 +627,11 @@ app.post('/api/admin/update', (req, res) => {
             return res.status(500).json({ success: false, message: 'Gagal update dari Git: ' + error.message });
         }
         res.json({ success: true, message: 'Pembaruan berhasil ditarik. Server direstart otomatis...', log: stdout });
-        setTimeout(() => process.exit(0), 1500);
+        setTimeout(() => {
+            exec('pm2 restart tukangsiaga', (err) => {
+                if (err) process.exit(0); // Fallback if PM2 is not found
+            });
+        }, 1500);
     });
 });
 
