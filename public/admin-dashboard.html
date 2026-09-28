@@ -910,6 +910,11 @@ async function loadOrders() {
                 <td class="px-4 py-3.5 text-sm text-slate-600">${o.technician_name||'<span class="text-slate-300 italic text-xs">Belum</span>'}</td>
                 <td class="px-4 py-3.5 text-right">
                     <div class="flex items-center justify-end gap-1.5">
+                        <a href="https://wa.me/${(o.customer_whatsapp||'').replace(/\D/g, '').replace(/^0/, '62')}?text=Halo%20Bapak/Ibu%20${encodeURIComponent(o.customer_name)},%0A%0ATerkait%20pesanan%20jasa%20dengan%20ID%20*${o.job_id}*,%20apakah%20bisa%20kami%20verifikasi%20sekarang?" target="_blank"
+                            title="Chat WhatsApp Pelanggan"
+                            class="h-8 w-8 flex items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 transition-colors">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                        </a>
                         <a href="/progress.html?id=${o.job_id}" target="_blank"
                             title="Lihat Progres"
                             class="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-brand-600 transition-colors">
