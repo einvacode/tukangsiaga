@@ -1442,7 +1442,7 @@ function renderDoc(type) {
                 <div class="text-center mb-6">
                     ${hasLogo ? `<img src="${cLogoUrl}" class="h-16 mx-auto mb-3 object-contain" style="max-width: 200px;">` : ''}
                     <h2 class="text-2xl font-bold uppercase">${cName}</h2>
-                    <p class="text-sm mt-1">${cAddress}</p>
+                    <p class="text-sm mt-1">${cAddress.replace(/\n/g, '<br>')}</p>
                     <p class="text-sm">${cPhone} &bull; ${cEmail}</p>
                     <p class="mt-4 font-bold border-y border-dashed border-black py-2 uppercase tracking-widest text-lg">I N V O I C E</p>
                 </div>
@@ -1523,7 +1523,7 @@ function renderDoc(type) {
                         ${hasLogo ? `<img src="${cLogoUrl}" class="h-16 object-contain" style="max-width: 150px;">` : `<div class="h-10 w-10 rounded-lg bg-brand-600 flex items-center justify-center text-white text-sm"><i data-lucide="hammer" class="w-5 h-5"></i></div>`}
                         <div>
                             <div class="font-extrabold text-xl text-slate-900 uppercase tracking-wide">${cName}</div>
-                            <p class="text-xs text-slate-500 mt-1">${cAddress}</p>
+                            <p class="text-xs text-slate-500 mt-1">${cAddress.replace(/\n/g, '<br>')}</p>
                             <p class="text-xs text-slate-500">${cEmail} &bull; ${cPhone}</p>
                         </div>
                     </div>
