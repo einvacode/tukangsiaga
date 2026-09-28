@@ -620,7 +620,8 @@ app.post('/api/admin/restore', uploadBackup.single('backup_file'), (req, res) =>
 });
 
 app.post('/api/admin/update', (req, res) => {
-    exec('git pull', (error, stdout, stderr) => {
+    // Reset local modifications (like package-lock.json changed by npm) before pulling
+    exec('git reset --hard HEAD && git pull origin master', (error, stdout, stderr) => {
         if (error) {
             console.error('[Git Pull Error]', error, stderr);
             return res.status(500).json({ success: false, message: 'Gagal update dari Git: ' + error.message });
