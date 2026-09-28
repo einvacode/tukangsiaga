@@ -11,18 +11,20 @@ if [ "$EUID" -ne 0 ]; then
   exit
 fi
 
-echo -e "\n[1/4] Memperbarui sistem dan menginstal git, curl..."
+echo -e "\n[1/4] Memperbarui sistem dan menginstal dependensi dasar..."
 apt-get update
-apt-get install -y curl git apt-transport-https lsb-release ca-certificates
+apt-get install -y curl git apt-transport-https lsb-release ca-certificates build-essential python3 make g++ pkg-config libsqlite3-dev
 
 echo -e "\n[2/4] Menginstal Node.js (LTS)..."
 # Setup Node.js repo LTS
 curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
 apt-get install -y nodejs
 
-echo -e "\n[3/4] Menginstal Dependensi Node.js..."
-# SQLite sudah include di dalam dependensi npm sqlite & sqlite3
-npm install
+echo -e "\n[3/4] Menginstal Dependensi Node.js & Compile SQLite3..."
+# Hapus node_modules lama jika ada untuk mencegah konflik binary
+rm -rf node_modules
+# Force compile sqlite3 dari source agar cocok dengan arsitektur Proxmox CT LXC
+npm_config_build_from_source=true npm install
 
 echo -e "\n[4/4] Mengatur PM2 agar aplikasi berjalan 24/7 di background..."
 npm install -g pm2
