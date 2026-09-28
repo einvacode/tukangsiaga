@@ -136,8 +136,8 @@
             <div class="hidden md:block">
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-white/10 border border-white/20 rounded-xl p-5 backdrop-blur-sm">
-                        <p id="statProjects" class="text-3xl font-bold text-white">...</p>
-                        <p class="text-blue-200 text-sm mt-1">Proyek Selesai</p>
+                        <p id="statTrust" class="text-3xl font-bold text-white">100%</p>
+                        <p class="text-blue-200 text-sm mt-1">Amanah & Terpercaya</p>
                     </div>
                     <div class="bg-white/10 border border-white/20 rounded-xl p-5 backdrop-blur-sm">
                         <p id="statSatisfaction" class="text-3xl font-bold text-white">...</p>
@@ -774,7 +774,6 @@
             const d = await r.json();
             if (d.success) {
                 const data = d.data;
-                document.getElementById('statProjects').textContent = data.projects_completed + '+';
                 document.getElementById('statTechs').textContent = data.technicians_count + '+';
                 document.getElementById('statSatisfaction').textContent = data.satisfaction_rate;
                 document.getElementById('statResponse').textContent = data.response_time;
