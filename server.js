@@ -134,12 +134,12 @@ let pool;
         ('company_name', 'Tukang Siaga'),
         ('company_email', 'hello@tukangsiaga.com'),
         ('company_phone', '0812-3456-7890'),
-        ('company_address', 'Jakarta Pusat'),
-        ('company_coverage', 'Jakarta, Bogor, Depok, Tangerang, Bekasi'),
+        ('company_address', 'Sragen, Jawa Tengah'),
+        ('company_coverage', 'Seluruh Wilayah Sragen & Sekitarnya'),
         ('gallery_categories', 'Umum, Saluran Air & Pipa, Plafon & Gypsum, Atap & Genteng Bocor, Instalasi Listrik, Cat Rumah'),
         ('company_logo', ''),
-        ('hero_title', 'Perbaikan Rumah Cepat, Transparan, & Bergaransi.'),
-        ('hero_subtitle', 'Pantau setiap tahap pekerjaan secara real-time. Harga jelas di awal, tanpa biaya tersembunyi.'),
+        ('hero_title', 'Jasa Tukang Sragen\nCepat, Profesional, & Bergaransi.'),
+        ('hero_subtitle', 'Solusi segala masalah perbaikan dan renovasi rumah di Sragen sekitarnya. Harga jelas, pantau pekerjaan real-time, 100% amanah.'),
         ('about_text', 'Platform jasa perbaikan rumah terpercaya. Teknisi profesional terverifikasi, harga transparan, hasil bergaransi.')`);
     }
 })();
