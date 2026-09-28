@@ -257,11 +257,18 @@
                 <h3 class="font-semibold text-slate-900 mb-1">Cek Status Pekerjaan Anda</h3>
                 <p class="text-sm text-slate-500 mb-4">ID dikirim ke WhatsApp setelah pesanan dibuat.</p>
                 <div class="flex gap-2">
-                    <input type="text" id="trackingInput" placeholder="Contoh: FIX-1234"
-                        class="flex-1 h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
-                    <button onclick="trackOrder()" class="flex items-center gap-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white px-5 font-semibold text-sm transition-colors">
+                    <input type="text" id="trackingInput" placeholder="Contoh: TS-170..."
+                        class="flex-1 h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition uppercase">
+                    <button onclick="trackOrder()" class="flex items-center gap-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white px-5 font-semibold text-sm transition-colors shadow-sm">
                         <i data-lucide="search" class="w-4 h-4"></i> Lacak
                     </button>
+                </div>
+                
+                <div id="recentOrdersContainer" class="mt-4 hidden">
+                    <p class="text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-wide">Pencarian Terakhir / Pesanan Anda</p>
+                    <div id="recentOrdersList" class="flex flex-wrap gap-2">
+                        <!-- Populated by JS -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -585,6 +592,14 @@
             const data = await res.json();
             if (data.success) {
                 closeModal();
+                
+                // Save to localStorage
+                let myOrders = JSON.parse(localStorage.getItem('ts_my_orders') || '[]');
+                if (!myOrders.includes(data.jobId)) {
+                    myOrders.push(data.jobId);
+                    localStorage.setItem('ts_my_orders', JSON.stringify(myOrders));
+                }
+                
                 showToast(`✅ Pesanan diterima! ID: ${data.jobId}`);
                 setTimeout(() => window.location.href = `/progress.html?id=${data.jobId}`, 1500);
             } else {
@@ -782,12 +797,34 @@
         }
     }
 
+    function loadRecentOrders() {
+        try {
+            const myOrders = JSON.parse(localStorage.getItem('ts_my_orders') || '[]');
+            if (myOrders.length > 0) {
+                const container = document.getElementById('recentOrdersContainer');
+                const list = document.getElementById('recentOrdersList');
+                container.classList.remove('hidden');
+                
+                // Show last 5 orders max
+                const displayOrders = myOrders.slice(-5).reverse();
+                list.innerHTML = displayOrders.map(id => `
+                    <a href="/progress.html?id=${id}" class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50 hover:border-brand-200 transition-colors shadow-sm">
+                        <i data-lucide="history" class="w-3 h-3 text-slate-400"></i> ${id}
+                    </a>
+                `).join('');
+                // recreate icons for the newly injected HTML
+                lucide.createIcons();
+            }
+        } catch(e) {}
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
         loadSettings();
         loadServices();
         loadGallery();
         loadStats();
+        loadRecentOrders();
     });
 </script>
 

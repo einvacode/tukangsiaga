@@ -250,6 +250,14 @@
             const d = await res.json();
             if (!d.success) return showErr(d.message);
             _data = d.data;
+            
+            // Save to my orders history
+            let myOrders = JSON.parse(localStorage.getItem('ts_my_orders') || '[]');
+            if (!myOrders.includes(id)) {
+                myOrders.push(id);
+                localStorage.setItem('ts_my_orders', JSON.stringify(myOrders));
+            }
+            
             render(d.data);
             updateWaLink();
         } catch { showErr('Gagal terhubung ke server.'); }
