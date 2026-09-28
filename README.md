@@ -7,6 +7,7 @@ Sistem Informasi Manajemen Jasa Tukang (Tukang Siaga) berbasis Web, menggunakan 
 - **Sistem Keuangan:** Catat pengeluaran HPP, tagihan kotor, dan total uang muka (DP) dengan kalkulasi laba-rugi (KPI) otomatis.
 - **Tracking Pelanggan:** Pelanggan dapat memantau status perbaikan mereka menggunakan `Job ID`.
 - **Cetak Dokumen:** Cetak Invoice, Surat Perintah Kerja (SPK), dan Surat Penawaran Harga (SPH) langsung dari aplikasi.
+- **PWA (Progressive Web App):** Mendukung instalasi aplikasi secara native di Android, iOS, maupun Desktop (offline cache caching).
 - **Sistem & Pemeliharaan:** Backup database secara lokal, merestore database, dan update kode dari Git langsung melalui antarmuka web.
 
 ## Instalasi Otomatis (Direkomendasikan untuk Proxmox LXC Ubuntu/Debian)
